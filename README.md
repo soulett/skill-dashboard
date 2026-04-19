@@ -1,20 +1,63 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Skill Dashboard
 
-# Run and deploy your AI Studio app
+本项目是一个本地 AI 能力资产管理台，当前分支正在推进 Alpha 真实链路版本：
 
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/0e3c81c4-37da-425d-8463-351ad15ea7b1
+`扫描本地技能 -> 展示真实数据 -> 健康检查 -> 去完善 -> 保存 sidecar metadata`
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
+前置要求：
 
+- Node.js 18+
+- npm
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 1. 安装依赖
+
+```bash
+npm install
+```
+
+### 2. 启动本地 API
+
+```bash
+npm run server
+```
+
+默认监听：
+
+`http://127.0.0.1:3210`
+
+### 3. 启动前端开发服务
+
+```bash
+npm run dev
+```
+
+Vite 会默认尝试 `3000` 端口；如果被占用，会自动切换到下一个可用端口。
+
+### 4. 打开应用
+
+浏览器打开 Vite 输出的本地地址，例如：
+
+`http://127.0.0.1:3000`
+
+或端口冲突时：
+
+`http://127.0.0.1:3011`
+
+## 当前开发约定
+
+- 开发期真实扫描目录：`skills-source/`
+- sidecar metadata 路径：`skill-dashboard-data/metadata.json`
+- 当前只支持扫描 `SKILL.md`
+- 当前只保存 `description / category / tags / whenToUse`
+- `/api` 请求通过 Vite 代理转发到本地 API
+
+## 常用命令
+
+```bash
+npm run server
+npm run dev
+npm run lint
+npm run build
+```

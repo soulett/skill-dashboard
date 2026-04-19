@@ -410,3 +410,13 @@ sidecar metadata 正好承载这层“整理结果”。
 
 `扫描真实技能 -> 展示 -> 健康检查 -> 编辑补充 -> sidecar 持久化`
 
+---
+
+## 10. 当前实现约定
+
+- 开发期扫描目录：`skills-source/`
+- sidecar metadata 路径：`skill-dashboard-data/metadata.json`
+- 当前只支持 `SKILL.md`
+- 当前只保存 `description / category / tags / whenToUse`
+- 本地 API 默认端口：`3210`
+- 前端通过 Vite `/api` 代理访问本地 API

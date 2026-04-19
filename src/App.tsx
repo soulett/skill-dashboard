@@ -9,7 +9,7 @@ import StatsCard from './components/StatsCard';
 import HealthCheck from './components/pages/HealthCheck';
 import Marketplace from './components/pages/Marketplace';
 import SkillMap from './components/pages/SkillMap';
-import { mockApi } from './mock';
+import { api } from './api';
 import { formatRelativeTime } from './utils';
 import { AppPage, Category, Skill, StatsData } from './types';
 
@@ -38,11 +38,12 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    Promise.all([mockApi.getSkills(), mockApi.getStats()]).then(([skillsRes, statsRes]) => {
-      if (skillsRes.success) setSkills(skillsRes.data.skills);
-      if (statsRes.success) setStatsData(statsRes.data);
-      setLoading(false);
-    });
+    Promise.all([api.getSkills(), api.getStats()])
+      .then(([skillsRes, statsRes]) => {
+        if (skillsRes.success) setSkills(skillsRes.data.skills);
+        if (statsRes.success) setStatsData(statsRes.data);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const filteredSkills = useMemo(() => {
@@ -67,8 +68,9 @@ export default function App() {
   };
 
   const handleScan = async () => {
-    await mockApi.triggerScan();
-    const statsRes = await mockApi.getStats();
+    await api.triggerScan();
+    const [skillsRes, statsRes] = await Promise.all([api.getSkills(), api.getStats()]);
+    if (skillsRes.success) setSkills(skillsRes.data.skills);
     if (statsRes.success) setStatsData(statsRes.data);
   };
 

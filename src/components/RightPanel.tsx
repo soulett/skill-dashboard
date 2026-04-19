@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { CheckCircle2, ChevronDown, Copy, Edit2, Plus, Save, Trash2, X } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { Category, Skill, SkillUpdatePayload } from '../types';
-import { mockApi } from '../mock';
+import { api } from '../api';
 import { formatRelativeTime } from '../utils';
 
 interface RightPanelProps {
@@ -182,14 +182,19 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
   const save = async () => {
     if (!skill) return;
     setIsSaving(true);
-    const result = await mockApi.updateSkill(skill.id, draft);
+    const result = await api.updateSkillMetadata(skill.id, {
+      description: draft.description,
+      category: draft.category,
+      tags: draft.tags,
+      whenToUse: draft.details?.whenToUse,
+    });
     setIsSaving(false);
 
     if (result.success) {
       onSkillUpdate(result.data);
       setIsEditing(false);
       setDraft({});
-      showToast('演示数据已保存', 'success');
+      showToast('技能补充信息已保存', 'success');
     } else {
       showToast(result.error ?? '保存失败，请重试', 'error');
     }

@@ -68,6 +68,13 @@ export interface SkillUpdatePayload {
   };
 }
 
+export interface SkillMetadataPatch {
+  description?: string;
+  category?: Category;
+  tags?: string[];
+  whenToUse?: string[];
+}
+
 export type AppPage = 'skills' | 'map' | 'marketplace' | 'health';
 
 export type MarketplaceAuthor = 'official' | 'community';
