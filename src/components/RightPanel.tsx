@@ -2,8 +2,8 @@ import { useEffect, useRef, useState, type ComponentType, type KeyboardEvent, ty
 import { AnimatePresence, motion } from 'motion/react';
 import { CheckCircle2, ChevronDown, Copy, Edit2, Plus, Save, Trash2, X } from 'lucide-react';
 import * as Icons from 'lucide-react';
-import { Category, Skill, SkillUpdatePayload } from '../types';
 import { api } from '../api';
+import { Category, Skill, SkillUpdatePayload } from '../types';
 import { formatRelativeTime } from '../utils';
 
 interface RightPanelProps {
@@ -131,6 +131,12 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
     }
   }, [autoEdit, isEditing, onAutoEditConsumed, skill]);
 
+  const cancelEdit = () => {
+    setIsEditing(false);
+    setDraft({});
+    setToast(null);
+  };
+
   const dismissPanel = () => {
     if (isEditing) {
       cancelEdit();
@@ -170,12 +176,6 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
       },
     });
     setIsEditing(true);
-    setToast(null);
-  };
-
-  const cancelEdit = () => {
-    setIsEditing(false);
-    setDraft({});
     setToast(null);
   };
 

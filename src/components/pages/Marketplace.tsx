@@ -34,7 +34,11 @@ export default function Marketplace({ installedSkills, onInstalled }: Marketplac
     const q = query.trim().toLowerCase();
     return MARKETPLACE_ITEMS.filter(item => {
       const matchesCat = catFilter === 'all' || item.category === catFilter;
-      const matchesQ = !q || item.name.toLowerCase().includes(q) || item.description.toLowerCase().includes(q) || item.tags.some(tag => tag.toLowerCase().includes(q));
+      const matchesQ =
+        !q ||
+        item.name.toLowerCase().includes(q) ||
+        item.description.toLowerCase().includes(q) ||
+        item.tags.some(tag => tag.toLowerCase().includes(q));
       return matchesCat && matchesQ;
     });
   }, [catFilter, query]);
@@ -68,9 +72,13 @@ export default function Marketplace({ installedSkills, onInstalled }: Marketplac
             <p className="text-sm text-on-surface-variant">为 demo 补足新的能力模块，模拟从市场安装技能的完整体验。</p>
           </div>
           <div className="flex items-center gap-3 text-sm text-on-surface-variant">
-            <span><span className="font-mono font-semibold text-on-surface">{installedCount}</span> 已安装</span>
+            <span>
+              <span className="font-mono font-semibold text-on-surface">{installedCount}</span> 已安装
+            </span>
             <span className="text-outline">·</span>
-            <span><span className="font-mono font-semibold text-on-surface">{MARKETPLACE_ITEMS.length - installedCount}</span> 可安装</span>
+            <span>
+              <span className="font-mono font-semibold text-on-surface">{MARKETPLACE_ITEMS.length - installedCount}</span> 可安装
+            </span>
           </div>
         </div>
       </motion.div>

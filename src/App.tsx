@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { BarChart3, Code2, GitMerge, Layers, LayoutDashboard, Megaphone, Package, PenLine } from 'lucide-react';
-import Sidebar from './components/Sidebar';
-import TopBar from './components/TopBar';
+import { api } from './api';
 import RightPanel from './components/RightPanel';
+import Sidebar from './components/Sidebar';
 import SkillCard from './components/SkillCard';
 import StatsCard from './components/StatsCard';
+import TopBar from './components/TopBar';
 import HealthCheck from './components/pages/HealthCheck';
 import Marketplace from './components/pages/Marketplace';
 import SkillMap from './components/pages/SkillMap';
-import { api } from './api';
-import { formatRelativeTime } from './utils';
 import { AppPage, Category, Skill, StatsData } from './types';
+import { formatRelativeTime } from './utils';
 
 type FilterCategory = Category | 'All';
 
@@ -37,13 +37,14 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const loadDashboardData = async () => {
+    const [skillsRes, statsRes] = await Promise.all([api.getSkills(), api.getStats()]);
+    if (skillsRes.success) setSkills(skillsRes.data.skills);
+    if (statsRes.success) setStatsData(statsRes.data);
+  };
+
   useEffect(() => {
-    Promise.all([api.getSkills(), api.getStats()])
-      .then(([skillsRes, statsRes]) => {
-        if (skillsRes.success) setSkills(skillsRes.data.skills);
-        if (statsRes.success) setStatsData(statsRes.data);
-      })
-      .finally(() => setLoading(false));
+    loadDashboardData().finally(() => setLoading(false));
   }, []);
 
   const filteredSkills = useMemo(() => {
@@ -69,9 +70,7 @@ export default function App() {
 
   const handleScan = async () => {
     await api.triggerScan();
-    const [skillsRes, statsRes] = await Promise.all([api.getSkills(), api.getStats()]);
-    if (skillsRes.success) setSkills(skillsRes.data.skills);
-    if (statsRes.success) setStatsData(statsRes.data);
+    await loadDashboardData();
   };
 
   const handleInstalled = (newSkill: Skill) => {
