@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'DM Sans', 'Helvetica Neue', sans-serif;
+  --font-display: 'DM Serif Display', 'Georgia', serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --color-surface: #0c0f1a;
+  --color-surface-container: #131828;
+  --color-surface-container-low: #151c2e;
+  --color-surface-container-high: #1a2035;
+  --color-surface-container-highest: #1f2640;
+  --color-surface-bright: #232a45;
+  --color-surface-code: #0f1320;
+  --color-surface-card: #171d31;
+  --color-surface-elevated: #1b2238;
+
+  --color-on-surface: #e2e8f4;
+  --color-on-surface-variant: #8a95b0;
+  --color-on-surface-muted: #545e7a;
+
+  --color-primary: #38c9b8;
+  --color-primary-container: rgba(56, 201, 184, 0.12);
+  --color-on-primary: #0c0f1a;
+
+  --color-secondary: #f0a830;
+  --color-secondary-container: rgba(240, 168, 48, 0.12);
+  --color-on-secondary: #0c0f1a;
+
+  --color-accent: #7dd3fc;
+  --color-accent-container: rgba(125, 211, 252, 0.12);
+
+  --color-success: #4ade80;
+  --color-tertiary: #4ade80;
+  --color-warning: #f0a830;
+  --color-error: #f87171;
+  --color-info: #60a5fa;
+
+  --color-outline: rgba(255, 255, 255, 0.18);
+  --color-outline-default: rgba(255, 255, 255, 0.14);
+  --color-outline-variant: rgba(255, 255, 255, 0.1);
+  --color-outline-subtle: rgba(255, 255, 255, 0.06);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-surface text-on-surface font-sans;
+    background-image:
+      radial-gradient(circle at top left, rgba(56, 201, 184, 0.12), transparent 28%),
+      radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.1), transparent 24%);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
