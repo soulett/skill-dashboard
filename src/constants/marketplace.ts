@@ -14,7 +14,7 @@ export const MARKETPLACE_ITEMS: MarketplaceItem[] = [
   {
     id: 'code-review',
     name: 'Code Review',
-    description: '做 PR 级别的代码审查，突出 bug、风险点和测试缺口。',
+    description: '做 PR 级别的代码审查，优先指出 bug、风险点和测试缺口。',
     category: '编程开发',
     tags: ['review', 'quality', 'security', 'testing'],
     author: 'official',

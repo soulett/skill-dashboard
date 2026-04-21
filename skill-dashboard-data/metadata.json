@@ -1,5 +1,783 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-20T00:00:00.000Z",
-  "skills": {}
+  "updatedAt": "2026-04-21T04:37:23.754Z",
+  "skills": {
+    ".system/imagegen/SKILL.md": {
+      "displayTitle": "图像生成能力",
+      "displayDescription": "图像生成能力用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "图像生成能力用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "产品设计",
+      "tags": [
+        "openai",
+        "api",
+        "产品设计"
+      ],
+      "whenToUse": [
+        "需要处理产品设计类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.464Z"
+    },
+    ".system/openai-docs/SKILL.md": {
+      "displayTitle": "OpenAI 官方文档检索",
+      "displayDescription": "OpenAI 官方文档检索用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "OpenAI 官方文档检索用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "编程开发",
+      "tags": [
+        "openai",
+        "api",
+        "research",
+        "编程开发"
+      ],
+      "whenToUse": [
+        "需要处理编程开发类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.512Z"
+    },
+    ".system/plugin-creator/SKILL.md": {
+      "displayTitle": "插件创建模板",
+      "displayDescription": "插件创建模板用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "插件创建模板用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "编程开发",
+      "tags": [
+        "编程开发"
+      ],
+      "whenToUse": [
+        "需要处理编程开发类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.557Z"
+    },
+    ".system/skill-creator/SKILL.md": {
+      "displayTitle": "技能创建模板",
+      "displayDescription": "技能创建模板用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "技能创建模板用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "效率流程",
+      "tags": [
+        "react",
+        "git",
+        "pdf",
+        "docx",
+        "效率流程"
+      ],
+      "whenToUse": [
+        "需要处理效率流程类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.603Z"
+    },
+    ".system/skill-installer/SKILL.md": {
+      "displayTitle": "技能安装工具",
+      "displayDescription": "技能安装工具用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "技能安装工具用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "效率流程",
+      "tags": [
+        "git",
+        "github",
+        "openai",
+        "api",
+        "效率流程"
+      ],
+      "whenToUse": [
+        "需要处理效率流程类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.654Z"
+    },
+    "analyst/SKILL.md": {
+      "displayTitle": "业务分析能力",
+      "displayDescription": "业务分析能力用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "业务分析能力用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "产品设计",
+      "tags": [
+        "research",
+        "产品设计"
+      ],
+      "whenToUse": [
+        "需要处理产品设计类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.693Z"
+    },
+    "brainstorming/SKILL.md": {
+      "displayTitle": "需求共创流程",
+      "displayDescription": "需求共创流程用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "需求共创流程用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "产品设计",
+      "tags": [
+        "git",
+        "browser",
+        "产品设计"
+      ],
+      "whenToUse": [
+        "需要处理产品设计类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.724Z"
+    },
+    "codex-primary-runtime/slides/SKILL.md": {
+      "displayTitle": "演示文稿工具",
+      "displayDescription": "演示文稿工具用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "演示文稿工具用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "typescript",
+        "pdf",
+        "ppt",
+        "api",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.758Z"
+    },
+    "codex-primary-runtime/spreadsheets/SKILL.md": {
+      "displayTitle": "电子表格工具",
+      "displayDescription": "电子表格工具用于处理数据分析相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "电子表格工具用于处理数据分析相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "数据分析",
+      "tags": [
+        "pdf",
+        "excel",
+        "api",
+        "research",
+        "数据分析"
+      ],
+      "whenToUse": [
+        "需要处理数据分析类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.795Z"
+    },
+    "doc/SKILL.md": {
+      "displayTitle": "Word 文档处理",
+      "displayDescription": "Word 文档处理用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Word 文档处理用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "pdf",
+        "docx",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-20T05:45:20.877Z"
+    },
+    "extract-learning-roadmap/SKILL.md": {
+      "displayTitle": "extract learning roadmap",
+      "displayDescription": "extract learning roadmap用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "extract learning roadmap用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "pdf",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:28:49.253Z"
+    },
+    "frontend-design/SKILL.md": {
+      "displayTitle": "前端设计能力",
+      "displayDescription": "前端设计能力用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "前端设计能力用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "编程开发",
+      "tags": [
+        "react",
+        "编程开发"
+      ],
+      "whenToUse": [
+        "需要处理编程开发类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.864Z"
+    },
+    "frontend-skill/SKILL.md": {
+      "displayTitle": "前端界面能力",
+      "displayDescription": "前端界面能力用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "前端界面能力用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "编程开发",
+      "tags": [
+        "编程开发"
+      ],
+      "whenToUse": [
+        "需要处理编程开发类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.910Z"
+    },
+    "jupyter-notebook/SKILL.md": {
+      "displayTitle": "Jupyter Notebook 工具",
+      "displayDescription": "Jupyter Notebook 工具用于处理数据分析相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Jupyter Notebook 工具用于处理数据分析相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "数据分析",
+      "tags": [
+        "数据分析"
+      ],
+      "whenToUse": [
+        "需要处理数据分析类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.943Z"
+    },
+    "markdown-to-pdf/SKILL.md": {
+      "displayTitle": "Markdown 转 PDF",
+      "displayDescription": "Markdown 转 PDF用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Markdown 转 PDF用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "browser",
+        "pdf",
+        "api",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-20T05:45:21.057Z"
+    },
+    "notion-research-documentation/SKILL.md": {
+      "displayTitle": "Notion 研究文档流程",
+      "displayDescription": "Notion 研究文档流程用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Notion 研究文档流程用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "效率流程",
+      "tags": [
+        "notion",
+        "research",
+        "效率流程"
+      ],
+      "whenToUse": [
+        "需要处理效率流程类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:01.988Z"
+    },
+    "notion-spec-to-implementation/SKILL.md": {
+      "displayTitle": "Notion 规格落地流程",
+      "displayDescription": "Notion 规格落地流程用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Notion 规格落地流程用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "效率流程",
+      "tags": [
+        "notion",
+        "api",
+        "效率流程"
+      ],
+      "whenToUse": [
+        "需要处理效率流程类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:02.026Z"
+    },
+    "paper-project-picker/SKILL.md": {
+      "displayTitle": "论文项目选择工具",
+      "displayDescription": "论文项目选择工具用于处理数据分析相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "论文项目选择工具用于处理数据分析相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "数据分析",
+      "tags": [
+        "git",
+        "github",
+        "research",
+        "数据分析"
+      ],
+      "whenToUse": [
+        "需要处理数据分析类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:02.068Z"
+    },
+    "paper-to-project-tech-note/SKILL.md": {
+      "displayTitle": "论文项目技术笔记",
+      "displayDescription": "论文项目技术笔记用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "论文项目技术笔记用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "pdf",
+        "research",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:02.137Z"
+    },
+    "pdf/SKILL.md": {
+      "displayTitle": "PDF 处理工具",
+      "displayDescription": "PDF 处理工具用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "PDF 处理工具用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "pdf",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:02.312Z"
+    },
+    "playwright/SKILL.md": {
+      "displayTitle": "浏览器自动化",
+      "displayDescription": "浏览器自动化用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "浏览器自动化用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "编程开发",
+      "tags": [
+        "browser",
+        "playwright",
+        "pdf",
+        "编程开发"
+      ],
+      "whenToUse": [
+        "需要处理编程开发类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:02.346Z"
+    },
+    "prd/SKILL.md": {
+      "displayTitle": "prd",
+      "displayDescription": "prd用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "prd用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "产品设计",
+      "tags": [
+        "browser",
+        "api",
+        "产品设计"
+      ],
+      "whenToUse": [
+        "需要处理产品设计类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:28:49.294Z"
+    },
+    "project-doc-to-qa/SKILL.md": {
+      "displayTitle": "项目面试问答生成器",
+      "displayDescription": "项目面试问答生成器用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "项目面试问答生成器用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "excel",
+        "research",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-20T05:45:21.444Z"
+    },
+    "project-doc-to-roadmap/SKILL.md": {
+      "displayTitle": "项目学习路线生成器",
+      "displayDescription": "项目学习路线生成器用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "项目学习路线生成器用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "pdf",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-20T05:45:21.475Z"
+    },
+    "project-doc-to-terms/SKILL.md": {
+      "displayTitle": "项目术语表生成器",
+      "displayDescription": "项目术语表生成器用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "项目术语表生成器用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "pdf",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-20T05:45:21.509Z"
+    },
+    "screenshot/SKILL.md": {
+      "displayTitle": "系统截图工具",
+      "displayDescription": "系统截图工具用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "系统截图工具用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "效率流程",
+      "tags": [
+        "browser",
+        "playwright",
+        "效率流程"
+      ],
+      "whenToUse": [
+        "需要处理效率流程类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:02.463Z"
+    },
+    "skill-repo-sync/SKILL.md": {
+      "displayTitle": "技能仓库同步流程",
+      "displayDescription": "技能仓库同步流程用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "技能仓库同步流程用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "效率流程",
+      "tags": [
+        "git",
+        "github",
+        "效率流程"
+      ],
+      "whenToUse": [
+        "需要处理效率流程类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:02.512Z"
+    },
+    "slides/SKILL.md": {
+      "displayTitle": "演示文稿工具",
+      "displayDescription": "演示文稿工具用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "演示文稿工具用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "pdf",
+        "ppt",
+        "api",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:02.563Z"
+    },
+    "spreadsheet/SKILL.md": {
+      "displayTitle": "表格处理工具",
+      "displayDescription": "表格处理工具用于处理数据分析相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "表格处理工具用于处理数据分析相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "数据分析",
+      "tags": [
+        "pdf",
+        "excel",
+        "api",
+        "数据分析"
+      ],
+      "whenToUse": [
+        "需要处理数据分析类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:26:02.619Z"
+    },
+    "writing-plans/SKILL.md": {
+      "displayTitle": "writing plans",
+      "displayDescription": "writing plans用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "writing plans用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "效率流程",
+      "tags": [
+        "git",
+        "效率流程"
+      ],
+      "whenToUse": [
+        "需要处理效率流程类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:28:49.335Z"
+    },
+    "babysit/SKILL.md": {
+      "displayTitle": "守护执行流程",
+      "displayDescription": "守护执行流程用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "守护执行流程用于处理效率流程相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "效率流程",
+      "tags": [
+        "效率流程"
+      ],
+      "whenToUse": [
+        "需要处理效率流程类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.318Z"
+    },
+    "canvas/SKILL.md": {
+      "displayTitle": "画布能力模块",
+      "displayDescription": "画布能力模块用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "画布能力模块用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "产品设计",
+      "tags": [
+        "react",
+        "api",
+        "产品设计"
+      ],
+      "whenToUse": [
+        "需要处理产品设计类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.359Z"
+    },
+    "create-hook/SKILL.md": {
+      "displayTitle": "Hook 创建模板",
+      "displayDescription": "Hook 创建模板用于处理数据分析相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Hook 创建模板用于处理数据分析相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "数据分析",
+      "tags": [
+        "数据分析"
+      ],
+      "whenToUse": [
+        "需要处理数据分析类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.400Z"
+    },
+    "create-rule/SKILL.md": {
+      "displayTitle": "规则创建模板",
+      "displayDescription": "规则创建模板用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "规则创建模板用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "react",
+        "typescript",
+        "api",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.449Z"
+    },
+    "create-skill/SKILL.md": {
+      "displayTitle": "技能创建模板",
+      "displayDescription": "技能创建模板用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "技能创建模板用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "产品设计",
+      "tags": [
+        "git",
+        "pdf",
+        "docx",
+        "excel",
+        "产品设计"
+      ],
+      "whenToUse": [
+        "需要处理产品设计类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.496Z"
+    },
+    "create-subagent/SKILL.md": {
+      "displayTitle": "子代理创建模板",
+      "displayDescription": "子代理创建模板用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "子代理创建模板用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "产品设计",
+      "tags": [
+        "git",
+        "excel",
+        "api",
+        "产品设计"
+      ],
+      "whenToUse": [
+        "需要处理产品设计类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.537Z"
+    },
+    "migrate-to-skills/SKILL.md": {
+      "displayTitle": "技能迁移工具",
+      "displayDescription": "技能迁移工具用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "技能迁移工具用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "产品设计",
+      "tags": [
+        "产品设计"
+      ],
+      "whenToUse": [
+        "需要处理产品设计类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.576Z"
+    },
+    "shell/SKILL.md": {
+      "displayTitle": "Shell 命令工具",
+      "displayDescription": "Shell 命令工具用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Shell 命令工具用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.619Z"
+    },
+    "statusline/SKILL.md": {
+      "displayTitle": "状态栏配置工具",
+      "displayDescription": "状态栏配置工具用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "状态栏配置工具用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "typescript",
+        "git",
+        "api",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.659Z"
+    },
+    "update-cli-config/SKILL.md": {
+      "displayTitle": "CLI 配置更新",
+      "displayDescription": "CLI 配置更新用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "CLI 配置更新用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "git",
+        "github",
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.702Z"
+    },
+    "update-cursor-settings/SKILL.md": {
+      "displayTitle": "Cursor 设置更新",
+      "displayDescription": "Cursor 设置更新用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Cursor 设置更新用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "产品设计",
+      "tags": [
+        "typescript",
+        "git",
+        "产品设计"
+      ],
+      "whenToUse": [
+        "需要处理产品设计类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-21T04:37:23.752Z"
+    }
+  }
 }

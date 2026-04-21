@@ -95,7 +95,7 @@ export default function Sidebar({ currentPage, onNavigate, skillCount, onScan, i
             className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-[13px] font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${scanning ? 'animate-spin' : ''}`} />
-            {scanning ? '刷新中...' : '刷新演示数据'}
+            {scanning ? '刷新中...' : '重新扫描技能'}
           </button>
         </div>
       </aside>

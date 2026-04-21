@@ -9,7 +9,7 @@ export const SKILLS: Skill[] = [
   {
     id: 'frontend-design',
     title: 'Frontend Design',
-    description: '用更强视觉和明确层级，把普通页面做成可展示、可上线、像产品的前端界面。',
+    description: '用更强视觉和更清晰层级，把普通页面做成可展示、可上线、像产品的前端界面。',
     category: '编程开发',
     tags: ['react', 'ui', 'landing-page', 'design-system'],
     status: 'active',

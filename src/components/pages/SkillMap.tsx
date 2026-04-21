@@ -85,7 +85,7 @@ export default function SkillMap({ skills, onNavigateToSkill }: SkillMapProps) {
       category,
       skills: skills.filter(skill => skill.category === category),
       center: CLUSTER_POSITIONS[index] ?? { x: W / 2, y: H / 2 },
-      style: CATEGORY_STYLE[category] ?? CATEGORY_STYLE['其他'],
+      style: CATEGORY_STYLE[category] ?? CATEGORY_STYLE.其他,
     }));
   }, [skills]);
 
@@ -119,8 +119,8 @@ export default function SkillMap({ skills, onNavigateToSkill }: SkillMapProps) {
   return (
     <div className="px-6 py-8">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-        <h1 className="font-display italic text-3xl text-on-surface leading-tight mb-1">Skill Map</h1>
-        <p className="text-sm text-on-surface-variant">把技能之间的关系可视化，帮助演示“能力资产”而不仅是一堆文件列表。</p>
+        <h1 className="font-display text-3xl text-on-surface leading-tight mb-1">Skill Map</h1>
+        <p className="text-sm text-on-surface-variant">把技能之间的关系可视化，帮助展示“能力资产”，而不只是一堆文件列表。</p>
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }} className="flex items-center justify-between gap-4 mb-4 flex-wrap">
@@ -238,7 +238,7 @@ export default function SkillMap({ skills, onNavigateToSkill }: SkillMapProps) {
                     opacity={isDimmed ? 0.3 : 0.9}
                     style={{ transition: 'opacity 0.15s', pointerEvents: 'none', userSelect: 'none' }}
                   >
-                    {skill.title.length > 8 ? `${skill.title.slice(0, 8)}…` : skill.title}
+                    {skill.title.length > 8 ? `${skill.title.slice(0, 8)}...` : skill.title}
                   </text>
                 </g>
               );

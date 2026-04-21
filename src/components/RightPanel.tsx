@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ComponentType, type KeyboardEvent, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { CheckCircle2, ChevronDown, Copy, Edit2, Plus, Save, Trash2, X } from 'lucide-react';
+import { CheckCircle2, ChevronDown, Copy, Edit2, Languages, Plus, Save, Trash2, X } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { api } from '../api';
 import { Category, Skill, SkillUpdatePayload } from '../types';
@@ -112,6 +112,7 @@ function WhenToUseEditor({ items, onChange }: { items: string[]; onChange: (item
 export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, onAutoEditConsumed }: RightPanelProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLocalizing, setIsLocalizing] = useState(false);
   const [draft, setDraft] = useState<SkillUpdatePayload>({});
   const [rawExpanded, setRawExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -147,13 +148,9 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
 
   useEffect(() => {
     if (!skill) return;
-
     const handleKeyDown = (event: globalThis.KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        dismissPanel();
-      }
+      if (event.key === 'Escape') dismissPanel();
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [skill, isEditing]);
@@ -183,10 +180,15 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
     if (!skill) return;
     setIsSaving(true);
     const result = await api.updateSkillMetadata(skill.id, {
+      displayTitle: draft.title,
+      displayDescription: draft.description,
       description: draft.description,
       category: draft.category,
       tags: draft.tags,
       whenToUse: draft.details?.whenToUse,
+      locale: 'zh-CN',
+      translationSource: 'manual',
+      translatedAt: new Date().toISOString(),
     });
     setIsSaving(false);
 
@@ -194,9 +196,23 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
       onSkillUpdate(result.data);
       setIsEditing(false);
       setDraft({});
-      showToast('技能补充信息已保存', 'success');
+      showToast('展示信息已保存，不会修改原始 SKILL.md', 'success');
     } else {
       showToast(result.error ?? '保存失败，请重试', 'error');
+    }
+  };
+
+  const localize = async () => {
+    if (!skill || isLocalizing) return;
+    setIsLocalizing(true);
+    const result = await api.localizeSkill(skill.id);
+    setIsLocalizing(false);
+
+    if (result.success) {
+      onSkillUpdate(result.data);
+      showToast('已生成中文展示信息，并保存到 metadata.json', 'success');
+    } else {
+      showToast(result.error ?? '生成失败，请重试', 'error');
     }
   };
 
@@ -260,10 +276,22 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
 
                   <div className="min-w-0">
                     <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-muted">技能详情</p>
-                    <p className="mt-1 text-[13px] text-on-surface-variant">{isEditing ? '正在编辑当前技能' : '查看适用场景与原始内容'}</p>
+                    <p className="mt-1 text-[13px] text-on-surface-variant">{isEditing ? '正在编辑中文展示信息' : '查看适用场景与原始内容'}</p>
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {!isEditing && (
+                      <button
+                        onClick={localize}
+                        disabled={isLocalizing}
+                        className="flex h-9 items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/8 px-3 text-[12px] font-medium text-primary transition-colors hover:bg-primary/14 disabled:opacity-50"
+                        title="生成中文展示信息"
+                      >
+                        {isLocalizing ? <span className="h-3 w-3 animate-spin rounded-full border-2 border-primary/30 border-t-primary" /> : <Languages className="h-3.5 w-3.5" />}
+                        中文化
+                      </button>
+                    )}
+
                     {!isEditing && (
                       <button
                         onClick={copyPath}
@@ -332,7 +360,12 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
                           className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-3 py-1.5 text-[17px] font-semibold text-on-surface outline-none focus:border-primary/40 mb-2"
                         />
                       ) : (
-                        <h2 className="text-[20px] font-semibold text-on-surface leading-tight mb-2">{skill.title}</h2>
+                        <>
+                          <h2 className="text-[20px] font-semibold text-on-surface leading-tight mb-1">{skill.title}</h2>
+                          {skill.originalTitle && skill.originalTitle.toLowerCase() !== skill.title.toLowerCase() && (
+                            <p className="text-[12px] text-on-surface-muted font-mono mb-1">{skill.originalTitle}</p>
+                          )}
+                        </>
                       )}
 
                       <div className="flex items-center gap-2 flex-wrap">
@@ -396,7 +429,7 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-[13px] text-on-surface-muted italic">暂时没有场景说明</p>
+                    <p className="text-[13px] text-on-surface-muted">暂时没有场景说明</p>
                   )}
                 </Section>
 
@@ -412,7 +445,7 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
                           </span>
                         ))
                       ) : (
-                        <span className="text-[13px] text-on-surface-muted italic">暂无标签</span>
+                        <span className="text-[13px] text-on-surface-muted">暂无标签</span>
                       )}
                     </div>
                   )}
@@ -437,27 +470,19 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
                         className="flex items-center gap-1.5 text-[12px] text-on-surface-muted hover:text-on-surface transition-colors mb-2"
                       >
                         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${rawExpanded ? 'rotate-180' : ''}`} />
-                        {rawExpanded ? '收起编辑' : '展开编辑原始内容'}
+                        {rawExpanded ? '收起原始内容' : '展开查看原始内容'}
                       </button>
 
                       {!rawExpanded && (
                         <div className="text-[11px] text-on-surface-muted bg-warning/8 border border-warning/20 rounded px-3 py-2">
-                          直接编辑原始内容会覆盖当前演示数据，建议只在需要时展开。
+                          原始内容来自 SKILL.md。当前编辑只会保存到 metadata.json，不会修改原文件。
                         </div>
                       )}
 
                       {rawExpanded && (
-                        <>
-                          <div className="text-[11px] text-on-surface-muted bg-warning/8 border border-warning/20 rounded px-3 py-2 mb-2">
-                            这是 demo 模式下的原始内容编辑区，适合快速整理展示资料。
-                          </div>
-                          <textarea
-                            rows={12}
-                            value={draft.details?.rawContent ?? ''}
-                            onChange={event => setDraft(value => ({ ...value, details: { ...value.details, rawContent: event.target.value } }))}
-                            className="w-full bg-surface-code border border-outline-subtle rounded-lg px-3 py-3 font-mono text-[12px] text-on-surface leading-relaxed resize-none outline-none focus:border-primary/40"
-                          />
-                        </>
+                        <pre className="bg-surface-code border border-outline-subtle rounded-lg p-4 font-mono text-[12px] text-on-surface/70 leading-relaxed overflow-auto max-h-[280px] whitespace-pre-wrap break-words">
+                          {skill.details.rawContent}
+                        </pre>
                       )}
                     </>
                   ) : (

@@ -68,7 +68,7 @@ export default function Marketplace({ installedSkills, onInstalled }: Marketplac
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <div className="flex items-end justify-between flex-wrap gap-3">
           <div>
-            <h1 className="font-display italic text-3xl text-on-surface leading-tight mb-1">Marketplace</h1>
+            <h1 className="font-display text-3xl text-on-surface leading-tight mb-1">Marketplace</h1>
             <p className="text-sm text-on-surface-variant">为 demo 补足新的能力模块，模拟从市场安装技能的完整体验。</p>
           </div>
           <div className="flex items-center gap-3 text-sm text-on-surface-variant">

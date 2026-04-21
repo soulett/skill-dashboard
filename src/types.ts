@@ -1,4 +1,5 @@
 export type SkillFileType = 'md' | 'json' | 'txt';
+export type SkillSource = 'codex' | 'cursor' | 'claude' | 'unknown';
 
 export type Category =
   | '编程开发'
@@ -21,6 +22,7 @@ export interface SkillDetail {
 export interface Skill {
   id: string;
   title: string;
+  originalTitle?: string;
   description: string;
   category: Category;
   tags: string[];
@@ -39,6 +41,25 @@ export interface StatsData {
   totalCategories: number;
   newSinceLastScan: number;
   lastScanTime: string;
+}
+
+export type SourceId = 'codex' | 'cursor' | 'claude';
+export type SourceScanState = 'detected' | 'empty' | 'unreachable';
+
+export interface SourceScanStatus {
+  source: SourceId;
+  label: string;
+  paths: string[];
+  status: SourceScanState;
+  skillCount: number;
+  lastScannedAt: string;
+  message?: string;
+}
+
+export interface SourceScanSummary {
+  sources: SourceScanStatus[];
+  totalDetectedSkills: number;
+  scannedAt: string;
 }
 
 export interface ScanResult {
@@ -69,10 +90,15 @@ export interface SkillUpdatePayload {
 }
 
 export interface SkillMetadataPatch {
+  displayTitle?: string;
+  displayDescription?: string;
   description?: string;
   category?: Category;
   tags?: string[];
   whenToUse?: string[];
+  locale?: 'zh-CN';
+  translationSource?: 'auto' | 'manual';
+  translatedAt?: string;
 }
 
 export type AppPage = 'skills' | 'map' | 'marketplace' | 'health';

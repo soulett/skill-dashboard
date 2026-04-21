@@ -44,10 +44,10 @@ export default function HealthCheck({ skills, onNavigateToSkill }: HealthCheckPr
   ];
 
   return (
-    <div className="px-6 py-8 max-w-4xl">
+    <div className="w-full px-6 py-8">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <h1 className="font-display italic text-3xl text-on-surface leading-tight mb-1">Health Check</h1>
-        <p className="text-sm text-on-surface-variant">快速检查技能资料是否完整，找出最影响演示观感的缺口。</p>
+        <h1 className="font-display text-3xl text-on-surface leading-tight mb-1">Health Check</h1>
+        <p className="text-sm text-on-surface-variant">快速检查技能资料是否完整，找出最影响展示观感的缺口。</p>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -137,6 +137,31 @@ export default function HealthCheck({ skills, onNavigateToSkill }: HealthCheckPr
   );
 }
 
+const FIELD_META: Record<string, { label: string; whatIs: string }> = {
+  tags: { label: '标签（tags）', whatIs: '用于搜索和筛选这项技能的关键词。' },
+  whatItDoes: { label: '一句话介绍（whatItDoes）', whatIs: '告诉用户这项技能能帮他省什么事。' },
+  description: { label: '技能描述（description）', whatIs: '给用户的简要说明，帮助快速判断是否适合。' },
+  whenToUse: { label: '适用场景（whenToUse）', whatIs: '说明在什么情况下最该使用这项技能。' },
+  rawContent: { label: '原始内容（rawContent）', whatIs: '用于追溯和二次编辑的完整原始资料。' },
+};
+
+function getFieldMeta(field: string) {
+  return FIELD_META[field] ?? { label: field, whatIs: '这个字段用于补全技能资料的关键信息。' };
+}
+
+function buildFallbackDetailedExplanation(field: string): string {
+  if (field === 'tags') {
+    return '标签决定了用户能不能在搜索和分类里快速找到这个技能。建议使用具体任务词而不是泛词，这样检索更准，也更容易让用户一眼判断是否相关。';
+  }
+  if (field === 'whatItDoes' || field === 'description') {
+    return '这段文案是用户决定“要不要继续看”的第一道判断。重点不是技术细节，而是明确它帮用户省下了哪类重复工作。';
+  }
+  if (field === 'whenToUse') {
+    return '适用场景相当于“使用时机提示”。写成真实工作片段，会比抽象描述更容易理解，也更容易触发用户马上行动。';
+  }
+  return '这条说明用于帮助用户理解字段作用和修改理由，避免只看到结果却不知道为什么要这样写。';
+}
+
 function SkillHealthRow({
   report,
   skill,
@@ -217,7 +242,13 @@ function SkillHealthRow({
         <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
 
         {report.grade !== 'excellent' && (
-          <button onClick={event => { event.stopPropagation(); onFix(); }} className="shrink-0 flex items-center gap-1 text-[11px] text-on-surface-variant hover:text-primary transition-colors">
+          <button
+            onClick={event => {
+              event.stopPropagation();
+              onFix();
+            }}
+            className="shrink-0 flex items-center gap-1 text-[11px] text-on-surface-variant hover:text-primary transition-colors"
+          >
             去完善
             <ArrowRight className="w-3 h-3" />
           </button>
@@ -278,13 +309,30 @@ function SkillHealthRow({
                     <div className="space-y-2">
                       {aiSuggestions.map(suggestion => {
                         const text = Array.isArray(suggestion.suggestion) ? suggestion.suggestion.join(' / ') : suggestion.suggestion;
+                        const { label, whatIs } = getFieldMeta(suggestion.field);
+                        const detailed = suggestion.detailedExplanation?.trim() || buildFallbackDetailedExplanation(suggestion.field);
                         const key = `${skill.id}-${suggestion.field}`;
 
                         return (
                           <div key={suggestion.field} className="flex items-start justify-between gap-2 p-2 rounded-lg bg-accent/5 border border-accent/15 text-[11px]">
-                            <div className="min-w-0">
-                              <span className="font-medium text-accent mr-1.5">{suggestion.field}</span>
-                              <span className="text-on-surface-variant break-all">{text}</span>
+                            <div className="min-w-0 space-y-1.5">
+                              <div className="text-accent font-medium">{label}</div>
+                              <div className="text-on-surface-variant break-all">
+                                <span className="text-on-surface-muted">建议内容：</span>
+                                {text}
+                              </div>
+                              <div className="text-on-surface-variant">
+                                <span className="text-on-surface-muted">这是什么：</span>
+                                {whatIs}
+                              </div>
+                              <div className="text-on-surface-variant">
+                                <span className="text-on-surface-muted">为什么这样做：</span>
+                                {suggestion.explanation}
+                              </div>
+                              <div className="text-on-surface-variant">
+                                <span className="text-on-surface-muted">详细说明：</span>
+                                {detailed}
+                              </div>
                             </div>
                             <button onClick={() => copyText(text, key)} className="shrink-0 text-on-surface-muted hover:text-on-surface transition-colors mt-0.5" title="复制">
                               {copied === key ? <CheckCircle2 className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}

@@ -1,10 +1,15 @@
 import type { Category, Skill } from '../src/types';
 
 export interface SkillMetadataPatch {
+  displayTitle?: string;
+  displayDescription?: string;
   description?: string;
   category?: Category;
   tags?: string[];
   whenToUse?: string[];
+  locale?: 'zh-CN';
+  translationSource?: 'auto' | 'manual';
+  translatedAt?: string;
 }
 
 export interface SkillMetadataFile {
@@ -15,6 +20,7 @@ export interface SkillMetadataFile {
 
 export interface ScanContext {
   scanRoots: string[];
+  fallbackScanRoots: string[];
   metadataFilePath: string;
 }
 

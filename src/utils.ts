@@ -1,4 +1,4 @@
-import { FieldCheckResult, HealthGrade, Skill, SkillEdge, SkillHealthReport } from './types';
+import { FieldCheckResult, HealthGrade, Skill, SkillEdge, SkillHealthReport, SkillSource } from './types';
 
 interface CheckDef {
   field: string;
@@ -9,12 +9,12 @@ interface CheckDef {
 }
 
 const CHECKS: CheckDef[] = [
-  { field: 'title', label: '标题完整', points: 15, tip: '标题要能直接说明这是哪类技能。', validator: skill => skill.title.trim().length > 0 },
-  { field: 'description', label: '描述清晰', points: 20, tip: '用一句话说清楚价值，建议至少 20 个字。', validator: skill => skill.description.trim().length >= 20 },
+  { field: 'title', label: '标题完整', points: 15, tip: '标题要能直接说明这是什么技能。', validator: skill => skill.title.trim().length > 0 },
+  { field: 'description', label: '描述清晰', points: 20, tip: '用一句话说清价值，建议至少 20 个字。', validator: skill => skill.description.trim().length >= 20 },
   { field: 'category', label: '分类明确', points: 10, tip: '尽量放进明确分类，减少“其他”。', validator: skill => skill.category !== '其他' },
   { field: 'tags', label: '标签够用', points: 10, tip: '至少准备 2 个可搜索标签。', validator: skill => skill.tags.length >= 2 },
   { field: 'whenToUse', label: '适用场景完整', points: 15, tip: '补齐至少 2 条具体使用场景。', validator: skill => skill.details.whenToUse.length >= 2 },
-  { field: 'whatItDoes', label: '详情信息完整', points: 20, tip: '详情说明尽量写清楚能力边界和产出。', validator: skill => skill.details.whatItDoes.trim().length >= 50 },
+  { field: 'whatItDoes', label: '详情信息完整', points: 20, tip: '详情说明尽量写清能力边界和产出。', validator: skill => skill.details.whatItDoes.trim().length >= 50 },
   { field: 'rawContent', label: '原始内容可追溯', points: 10, tip: '保留可预览的原始内容片段，便于校对。', validator: skill => skill.details.rawContent.trim().length >= 50 },
 ];
 
@@ -91,4 +91,19 @@ export function formatRelativeTime(isoString: string): string {
   if (days === 1) return '昨天';
   if (days < 30) return `${days} 天前`;
   return new Date(isoString).toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+}
+
+export function inferSkillSource(sourcePath: string): SkillSource {
+  const normalized = sourcePath.replaceAll('\\', '/').toLowerCase();
+  if (normalized.includes('/.codex/')) return 'codex';
+  if (normalized.includes('/.cursor/')) return 'cursor';
+  if (normalized.includes('/.claude/')) return 'claude';
+  return 'unknown';
+}
+
+export function getSkillSourceMeta(source: SkillSource): { label: string; chipClass: string } {
+  if (source === 'codex') return { label: 'Codex', chipClass: 'bg-info/12 text-info border-info/30' };
+  if (source === 'cursor') return { label: 'Cursor', chipClass: 'bg-tertiary/12 text-tertiary border-tertiary/30' };
+  if (source === 'claude') return { label: 'Claude', chipClass: 'bg-secondary/12 text-secondary border-secondary/30' };
+  return { label: '其他来源', chipClass: 'bg-surface-bright text-on-surface-muted border-outline-subtle' };
 }

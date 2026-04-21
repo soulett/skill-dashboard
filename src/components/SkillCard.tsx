@@ -2,7 +2,7 @@ import { type ComponentType } from 'react';
 import { motion } from 'motion/react';
 import * as Icons from 'lucide-react';
 import { Category, Skill } from '../types';
-import { formatRelativeTime } from '../utils';
+import { formatRelativeTime, getSkillSourceMeta, inferSkillSource } from '../utils';
 
 interface SkillCardProps {
   skill: Skill;
@@ -29,11 +29,13 @@ const STATUS_CONFIG = {
 
 export default function SkillCard({ skill, isSelected, animationDelay = 0, onClick }: SkillCardProps) {
   const Icon = (Icons as unknown as Record<string, ComponentType<{ className?: string }>>)[skill.icon] ?? Icons.Cpu;
-  const colors = CATEGORY_COLORS[skill.category];
+  const colors = CATEGORY_COLORS[skill.category] ?? CATEGORY_COLORS.其他;
   const status = STATUS_CONFIG[skill.status];
+  const sourceMeta = getSkillSourceMeta(inferSkillSource(skill.sourcePath));
 
   return (
     <motion.div
+      data-skill-card="true"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.97 }}
@@ -58,7 +60,13 @@ export default function SkillCard({ skill, isSelected, animationDelay = 0, onCli
       </div>
 
       <h3 className="text-[17px] font-semibold text-on-surface leading-tight mb-1">{skill.title}</h3>
-      <span className={`inline-block text-[11px] font-medium px-1.5 py-0.5 rounded mb-2 ${colors.tag}`}>{skill.category}</span>
+      {skill.originalTitle && skill.originalTitle.toLowerCase() !== skill.title.toLowerCase() && (
+        <p className="text-[11px] text-on-surface-muted font-mono mb-1.5 truncate">{skill.originalTitle}</p>
+      )}
+      <div className="flex items-center gap-1.5 mb-2">
+        <span className={`inline-block text-[11px] font-medium px-1.5 py-0.5 rounded ${colors.tag}`}>{skill.category}</span>
+        <span className={`inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded border ${sourceMeta.chipClass}`}>{sourceMeta.label}</span>
+      </div>
 
       <p className="text-[13px] text-on-surface-variant leading-relaxed line-clamp-3 mb-4">{skill.description}</p>
 
