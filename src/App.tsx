@@ -136,13 +136,23 @@ export default function App() {
   const handleLocalizeAll = async () => {
     setLocalizingAll(true);
     setLocalizeFeedback(null);
+    const scanResult = await api.triggerScan();
+    if (!scanResult.success) {
+      setLocalizeFeedback('扫描失败，请稍后重试。');
+      setLocalizingAll(false);
+      return;
+    }
+
     const result = await api.localizeAllSkills();
     if (result.success) {
       setSkills(result.data.skills);
       const updatedCount = 'updatedCount' in result.data ? result.data.updatedCount : result.data.total;
       const skippedCount = 'skippedCount' in result.data ? result.data.skippedCount : 0;
-      setLocalizeFeedback(`本次已更新 ${updatedCount} 条，跳过 ${skippedCount} 条`);
+      setLocalizeFeedback(`本次已更新 ${updatedCount} 条，跳过 ${skippedCount} 条。`);
+    } else {
+      setLocalizeFeedback('扫描完成，但中文展示更新失败。');
     }
+
     await loadDashboardData();
     setLocalizingAll(false);
   };
@@ -317,7 +327,7 @@ function SkillLibraryPage({
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <button
               onClick={onLocalizeAll}
-              disabled={localizingAll || skills.length === 0}
+              disabled={localizingAll}
               className="rounded-xl border border-primary/30 bg-primary/10 px-4 py-2 text-[13px] font-medium text-primary transition-colors hover:bg-primary/16 disabled:opacity-50"
             >
               {localizingAll ? '正在扫描并更新中文展示...' : '扫描新技能并更新中文展示'}
