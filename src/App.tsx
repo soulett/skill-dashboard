@@ -46,6 +46,11 @@ const SKILL_ROOT_GUIDES = [
   },
 ] as const;
 
+const SOURCE_LOCATE_STEPS: Record<'windows' | 'macos', string[]> = {
+  windows: ['打开“文件资源管理器”', '点“查看”并勾选“隐藏的项目”', '进入下方候选路径，选择包含 SKILL.md 的目录'],
+  macos: ['打开 Finder', '按 Command + Shift + . 显示隐藏文件夹', '按 Shift + Command + G，输入下方候选路径并前往'],
+};
+
 const SOURCE_FILTER_CONFIG: Array<{ id: SourceFilter; label: string }> = [
   { id: 'all', label: '全部来源' },
   { id: 'codex', label: 'Codex' },
@@ -615,6 +620,7 @@ function SkillLibraryPage({
                   const sourceKey = source.source as ImportSource;
                   const isImportingThisSource = importingSource === sourceKey;
                   const importUi = importStateBySource[sourceKey];
+                  const guidePaths = SKILL_ROOT_GUIDES.find(item => item.id === sourceKey)?.paths ?? source.paths;
                   const importLabel =
                     importUi.state === 'success'
                       ? `已导入 ${importUi.importedCount} 条`
@@ -635,6 +641,11 @@ function SkillLibraryPage({
                       </div>
                       <div className="text-[20px] font-mono font-semibold text-on-surface">{source.skillCount}</div>
                       <div className="text-[11px] text-on-surface-muted mb-2">已识别技能数</div>
+                      {(source.scannedSkillCount !== undefined || source.importedSkillCount !== undefined) && (
+                        <div className="mb-2 text-[10px] text-on-surface-muted">
+                          扫描 {source.scannedSkillCount ?? 0} · 导入 {source.importedSkillCount ?? 0}
+                        </div>
+                      )}
                       <div className="space-y-1">
                         {source.paths.map(scanPath => (
                           <div key={scanPath} className="rounded-md bg-surface-card border border-outline-subtle px-2 py-1 text-[10px] text-on-surface-muted font-mono break-all">
@@ -654,14 +665,32 @@ function SkillLibraryPage({
                       </div>
 
                       <details className="mt-2 text-[11px] text-on-surface-muted">
-                        <summary className="cursor-pointer select-none">找不到目录？查看{source.label}定位步骤</summary>
-                        <div className="mt-2 space-y-1">
-                          {source.paths.map(scanPath => (
+                        <summary className="cursor-pointer select-none">找不到目录？查看 {source.label} 定位步骤</summary>
+                        <div className="mt-2 space-y-2">
+                          <div className="text-[10px] uppercase tracking-[0.08em] text-on-surface-muted">候选路径</div>
+                          {guidePaths.map(scanPath => (
                             <div key={`guide-${scanPath}`} className="rounded-md bg-surface-card border border-outline-subtle px-2 py-1 font-mono break-all">
                               {maskPathForDisplay(scanPath)}
                             </div>
                           ))}
-                          <p>Windows：文件选择器点“查看”→ 勾选“隐藏的项目”后再进入以上目录。</p>
+                          <div className="grid gap-2 sm:grid-cols-2">
+                            <div className="rounded-md bg-surface-card border border-outline-subtle px-2 py-2">
+                              <div className="mb-1 text-[10px] font-semibold text-on-surface">Windows</div>
+                              {SOURCE_LOCATE_STEPS.windows.map(step => (
+                                <p key={`${source.source}-win-${step}`} className="text-[10px] text-on-surface-muted">
+                                  - {step}
+                                </p>
+                              ))}
+                            </div>
+                            <div className="rounded-md bg-surface-card border border-outline-subtle px-2 py-2">
+                              <div className="mb-1 text-[10px] font-semibold text-on-surface">macOS</div>
+                              {SOURCE_LOCATE_STEPS.macos.map(step => (
+                                <p key={`${source.source}-mac-${step}`} className="text-[10px] text-on-surface-muted">
+                                  - {step}
+                                </p>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       </details>
                     </div>

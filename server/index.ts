@@ -47,7 +47,7 @@ app.get('/api/stats', async (_req, res) => {
 });
 
 app.get('/api/source-scan-summary', async (_req, res) => {
-  const summary = await getSourceScanSummary();
+  const summary = await getSourceScanSummary(scanContext);
   res.json({ success: true, data: summary });
 });
 

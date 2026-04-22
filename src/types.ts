@@ -55,6 +55,8 @@ export interface SourceScanStatus {
   paths: string[];
   status: SourceScanState;
   skillCount: number;
+  scannedSkillCount?: number;
+  importedSkillCount?: number;
   lastScannedAt: string;
   message?: string;
 }

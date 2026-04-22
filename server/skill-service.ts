@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import type { Skill, SourceScanSummary, StatsData } from '../src/types';
+import type { Skill, SourceId, SourceScanSummary, StatsData } from '../src/types';
 import { SOURCE_SCAN_ROOTS } from './config';
 import { ensureImportedSkillsFile, ensureMetadataFile, saveImportedSkills, saveSkillMetadataPatch } from './metadata-store';
 import { scanSingleRoot, scanSkillRoots } from './skill-scanner';
@@ -9,7 +9,6 @@ function resolveStatus(skill: Skill): Skill['status'] {
   const hasDescription = skill.description.trim().length > 0 && skill.description !== '待补充描述';
   const hasWhenToUse = skill.details.whenToUse.length > 0;
   const hasTags = skill.tags.length > 0;
-
   return hasDescription && (hasWhenToUse || hasTags) ? 'active' : 'unrecognized';
 }
 
@@ -30,10 +29,7 @@ function mergeSkill(base: Skill, patch?: SkillMetadataPatch): Skill {
     },
   };
 
-  return {
-    ...merged,
-    status: resolveStatus(merged),
-  };
+  return { ...merged, status: resolveStatus(merged) };
 }
 
 async function scanWithFallback(context: ScanContext): Promise<Skill[]> {
@@ -64,12 +60,7 @@ function mergeDuplicateSkills(skills: Skill[]): Skill[] {
   }
 
   return [...grouped.entries()].map(([fingerprint, items]) => {
-    const sorted = [...items].sort((a, b) => {
-      const left = new Date(a.updatedAt).getTime();
-      const right = new Date(b.updatedAt).getTime();
-      return right - left;
-    });
-
+    const sorted = [...items].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
     const primary = sorted[0];
     const sourcePaths = [...new Set(items.map(item => item.sourcePath))];
     return {
@@ -87,17 +78,21 @@ async function getImportedSkills(context: ScanContext): Promise<Skill[]> {
   return imported.skills;
 }
 
+function inferSourceFromPath(sourcePath: string): SourceId | 'unknown' {
+  const normalized = sourcePath.replaceAll('\\', '/').toLowerCase();
+  if (normalized.startsWith('local://codex/') || normalized.includes('/.codex/')) return 'codex';
+  if (normalized.startsWith('local://cursor/') || normalized.includes('/.cursor/')) return 'cursor';
+  if (normalized.startsWith('local://claude/') || normalized.includes('/.claude/')) return 'claude';
+  return 'unknown';
+}
+
 export async function getRawSkills(context: ScanContext): Promise<Skill[]> {
   const [scanned, imported] = await Promise.all([scanWithFallback(context), getImportedSkills(context)]);
   return mergeDuplicateSkills([...scanned, ...imported]);
 }
 
 export async function getMergedSkills(context: ScanContext): Promise<Skill[]> {
-  const [metadata, parsed] = await Promise.all([
-    ensureMetadataFile(context.metadataFilePath),
-    getRawSkills(context),
-  ]);
-
+  const [metadata, parsed] = await Promise.all([ensureMetadataFile(context.metadataFilePath), getRawSkills(context)]);
   return parsed.map(skill => mergeSkill(skill, metadata.skills[skill.id]));
 }
 
@@ -107,11 +102,7 @@ export async function getRawSkill(context: ScanContext, skillId: string): Promis
 }
 
 export async function getStats(context: ScanContext): Promise<StatsData> {
-  const [skills, metadata] = await Promise.all([
-    getMergedSkills(context),
-    ensureMetadataFile(context.metadataFilePath),
-  ]);
-
+  const [skills, metadata] = await Promise.all([getMergedSkills(context), ensureMetadataFile(context.metadataFilePath)]);
   return {
     totalSkills: skills.length,
     totalCategories: new Set(skills.map(skill => skill.category)).size,
@@ -148,27 +139,44 @@ export async function importSkills(context: ScanContext, incoming: Skill[]) {
   };
 }
 
-export async function getSourceScanSummary(): Promise<SourceScanSummary> {
+export async function getSourceScanSummary(context: ScanContext): Promise<SourceScanSummary> {
   const scannedAt = new Date().toISOString();
-  const statuses = await Promise.all(
+  const importedSkills = await getImportedSkills(context);
+  const importedCountBySource = importedSkills.reduce<Record<SourceId, number>>(
+    (acc, skill) => {
+      const source = inferSourceFromPath(skill.sourcePath);
+      if (source !== 'unknown') acc[source] += 1;
+      return acc;
+    },
+    { codex: 0, cursor: 0, claude: 0 },
+  );
+
+  const sources = await Promise.all(
     SOURCE_SCAN_ROOTS.map(async target => {
       const results = await Promise.all(target.paths.map(scanSingleRoot));
-      const skillCount = results.reduce((sum, item) => sum + item.skills.length, 0);
-      const hasDetected = results.some(item => item.state === 'detected');
+      const scannedSkillCount = results.reduce((sum, item) => sum + item.skills.length, 0);
+      const importedSkillCount = importedCountBySource[target.source] ?? 0;
+      const skillCount = scannedSkillCount + importedSkillCount;
+
+      const hasDetected = results.some(item => item.state === 'detected') || importedSkillCount > 0;
       const hasEmpty = results.some(item => item.state === 'empty');
-      const mergedStatus: SourceScanSummary['sources'][number]['status'] = hasDetected ? 'detected' : hasEmpty ? 'empty' : 'unreachable';
+      const status: SourceScanSummary['sources'][number]['status'] = hasDetected ? 'detected' : hasEmpty ? 'empty' : 'unreachable';
 
       return {
         source: target.source,
         label: target.label,
         paths: [...target.paths],
-        status: mergedStatus,
+        status,
         skillCount,
+        scannedSkillCount,
+        importedSkillCount,
         lastScannedAt: scannedAt,
         message:
-          mergedStatus === 'detected'
-            ? '已识别'
-            : mergedStatus === 'empty'
+          status === 'detected'
+            ? importedSkillCount > 0
+              ? '已识别（含已导入）'
+              : '已识别'
+            : status === 'empty'
               ? '目录存在，暂未发现技能'
               : '未找到目录或无访问权限',
       };
@@ -176,18 +184,15 @@ export async function getSourceScanSummary(): Promise<SourceScanSummary> {
   );
 
   return {
-    sources: statuses,
-    totalDetectedSkills: statuses.reduce((sum, item) => sum + item.skillCount, 0),
+    sources,
+    totalDetectedSkills: sources.reduce((sum, item) => sum + item.skillCount, 0),
     scannedAt,
   };
 }
 
-export async function updateSkillMetadata(
-  context: ScanContext,
-  skillId: string,
-  patch: SkillMetadataPatch,
-): Promise<Skill | null> {
+export async function updateSkillMetadata(context: ScanContext, skillId: string, patch: SkillMetadataPatch): Promise<Skill | null> {
   await saveSkillMetadataPatch(context.metadataFilePath, skillId, patch);
   const skills = await getMergedSkills(context);
   return skills.find(skill => skill.id === skillId) ?? null;
 }
+
