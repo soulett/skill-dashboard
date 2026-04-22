@@ -23,6 +23,9 @@ export interface Skill {
   id: string;
   title: string;
   originalTitle?: string;
+  contentHash?: string;
+  sourcePaths?: string[];
+  sourceCount?: number;
   description: string;
   category: Category;
   tags: string[];
@@ -72,6 +75,14 @@ export interface ScanResult {
   errors: string[];
 }
 
+export interface ImportSkillsResult {
+  success: boolean;
+  importedCount: number;
+  totalImportedStored: number;
+  totalSkills: number;
+  scannedAt: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
@@ -104,6 +115,7 @@ export interface SkillMetadataPatch {
 export type AppPage = 'skills' | 'map' | 'marketplace' | 'health';
 
 export type MarketplaceAuthor = 'official' | 'community';
+export type MarketplaceSourceType = 'github' | 'marketplace' | 'docs';
 
 export interface MarketplaceItem {
   id: string;
@@ -114,6 +126,11 @@ export interface MarketplaceItem {
   author: MarketplaceAuthor;
   installs: number;
   githubPath: string;
+  sourceType?: MarketplaceSourceType;
+  sourceLabel?: string;
+  sourceUrl?: string;
+  popularityLabel?: string;
+  trendNote?: string;
 }
 
 export type HealthGrade = 'excellent' | 'good' | 'needs-work' | 'critical';

@@ -95,6 +95,9 @@ export function formatRelativeTime(isoString: string): string {
 
 export function inferSkillSource(sourcePath: string): SkillSource {
   const normalized = sourcePath.replaceAll('\\', '/').toLowerCase();
+  if (normalized.startsWith('local://codex/')) return 'codex';
+  if (normalized.startsWith('local://cursor/')) return 'cursor';
+  if (normalized.startsWith('local://claude/')) return 'claude';
   if (normalized.includes('/.codex/')) return 'codex';
   if (normalized.includes('/.cursor/')) return 'cursor';
   if (normalized.includes('/.claude/')) return 'claude';

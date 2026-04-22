@@ -2,11 +2,11 @@ import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
 import { scanContext } from './config';
-import { suggestFieldFixesWithAI } from './ai-service';
+import { suggestFieldFixesWithAI, suggestPathHelpWithAI } from './ai-service';
 import { generateChineseMetadata } from './localizer';
 import { ensureMetadataFile } from './metadata-store';
 import { scanSkillRoots } from './skill-scanner';
-import { getMergedSkills, getRawSkill, getRawSkills, getSourceScanSummary, getStats, triggerScan, updateSkillMetadata } from './skill-service';
+import { getMergedSkills, getRawSkill, getRawSkills, getSourceScanSummary, getStats, importSkills, triggerScan, updateSkillMetadata } from './skill-service';
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.use(
       : undefined,
   ),
 );
-app.use(express.json());
+app.use(express.json({ limit: '12mb' }));
 
 app.get('/api/health', (_req, res) => {
   res.json({ success: true, data: { ok: true } });
@@ -53,6 +53,17 @@ app.get('/api/source-scan-summary', async (_req, res) => {
 
 app.post('/api/scan', async (_req, res) => {
   const result = await triggerScan(scanContext);
+  res.json({ success: true, data: result });
+});
+
+app.post('/api/import-skills', async (req, res) => {
+  const skills = req.body?.skills;
+  if (!Array.isArray(skills)) {
+    res.status(400).json({ success: false, error: 'Invalid request body: skills[] is required' });
+    return;
+  }
+
+  const result = await importSkills(scanContext, skills);
   res.json({ success: true, data: result });
 });
 
@@ -131,6 +142,38 @@ app.post('/api/ai/suggest-field-fixes', async (req, res) => {
   } catch {
     res.status(500).json({ success: false, error: 'Failed to generate suggestions' });
   }
+});
+
+app.post('/api/ai/path-help', async (req, res) => {
+  try {
+    const { message, source, os, knownPaths, lastError } = req.body ?? {};
+    if (!message || typeof message !== 'string') {
+      res.status(400).json({ success: false, error: 'Invalid request body: message is required' });
+      return;
+    }
+
+    const result = await suggestPathHelpWithAI({
+      message: String(message),
+      source: typeof source === 'string' ? (source as 'codex' | 'cursor' | 'claude' | 'unknown') : 'unknown',
+      os: typeof os === 'string' ? (os as 'windows' | 'macos' | 'linux' | 'unknown') : 'unknown',
+      knownPaths: Array.isArray(knownPaths) ? knownPaths.map(item => String(item)) : [],
+      lastError: typeof lastError === 'string' ? lastError : '',
+    });
+
+    res.json({ success: true, data: result });
+  } catch {
+    res.status(500).json({ success: false, error: 'Failed to generate path help' });
+  }
+});
+
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err?.type === 'entity.too.large') {
+    res.status(413).json({ success: false, error: '导入内容过大，请缩小目录范围后重试（例如只选 skills 目录）。' });
+    return;
+  }
+
+  console.error('Unhandled API error:', err);
+  res.status(500).json({ success: false, error: '服务暂时不可用，请稍后重试。' });
 });
 
 const port = Number(process.env.PORT ?? 3210);

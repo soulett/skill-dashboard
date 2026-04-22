@@ -7,3 +7,4 @@ coverage/
 .runtime/
 .env*
 !.env.example
+skill-dashboard-data/imported-skills.json

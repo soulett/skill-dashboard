@@ -1,6 +1,7 @@
+import crypto from 'node:crypto';
 import type { Skill, SourceScanSummary, StatsData } from '../src/types';
 import { SOURCE_SCAN_ROOTS } from './config';
-import { ensureMetadataFile, saveSkillMetadataPatch } from './metadata-store';
+import { ensureImportedSkillsFile, ensureMetadataFile, saveImportedSkills, saveSkillMetadataPatch } from './metadata-store';
 import { scanSingleRoot, scanSkillRoots } from './skill-scanner';
 import type { ScanContext, SkillMetadataPatch } from './types';
 
@@ -40,8 +41,55 @@ async function scanWithFallback(context: ScanContext): Promise<Skill[]> {
   return primary.length > 0 ? primary : await scanSkillRoots(context.fallbackScanRoots);
 }
 
+function normalizeRawContent(raw: string): string {
+  return raw.replace(/\r\n/g, '\n').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function getSkillFingerprint(skill: Skill): string {
+  if (skill.contentHash) return skill.contentHash;
+  const normalized = normalizeRawContent(skill.details.rawContent || '');
+  if (normalized.length > 0) {
+    return crypto.createHash('sha256').update(normalized).digest('hex');
+  }
+  return `id:${skill.id}`;
+}
+
+function mergeDuplicateSkills(skills: Skill[]): Skill[] {
+  const grouped = new Map<string, Skill[]>();
+  for (const skill of skills) {
+    const key = getSkillFingerprint(skill);
+    const bucket = grouped.get(key) ?? [];
+    bucket.push(skill);
+    grouped.set(key, bucket);
+  }
+
+  return [...grouped.entries()].map(([fingerprint, items]) => {
+    const sorted = [...items].sort((a, b) => {
+      const left = new Date(a.updatedAt).getTime();
+      const right = new Date(b.updatedAt).getTime();
+      return right - left;
+    });
+
+    const primary = sorted[0];
+    const sourcePaths = [...new Set(items.map(item => item.sourcePath))];
+    return {
+      ...primary,
+      contentHash: fingerprint,
+      sourcePaths,
+      sourceCount: sourcePaths.length,
+      sourcePath: sourcePaths[0],
+    };
+  });
+}
+
+async function getImportedSkills(context: ScanContext): Promise<Skill[]> {
+  const imported = await ensureImportedSkillsFile(context.importedSkillsFilePath);
+  return imported.skills;
+}
+
 export async function getRawSkills(context: ScanContext): Promise<Skill[]> {
-  return scanWithFallback(context);
+  const [scanned, imported] = await Promise.all([scanWithFallback(context), getImportedSkills(context)]);
+  return mergeDuplicateSkills([...scanned, ...imported]);
 }
 
 export async function getMergedSkills(context: ScanContext): Promise<Skill[]> {
@@ -82,6 +130,21 @@ export async function triggerScan(context: ScanContext) {
     failedCount: 0,
     scannedAt: new Date().toISOString(),
     errors: [],
+  };
+}
+
+export async function importSkills(context: ScanContext, incoming: Skill[]) {
+  const imported = await getImportedSkills(context);
+  const merged = mergeDuplicateSkills([...imported, ...incoming]);
+  await saveImportedSkills(context.importedSkillsFilePath, merged);
+  const skills = await getMergedSkills(context);
+
+  return {
+    success: true,
+    importedCount: incoming.length,
+    totalImportedStored: merged.length,
+    totalSkills: skills.length,
+    scannedAt: new Date().toISOString(),
   };
 }
 
