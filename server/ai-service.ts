@@ -35,6 +35,37 @@ interface PathHelpResponse {
   confidence: 'low' | 'medium' | 'high';
 }
 
+interface AISkillSuggestion {
+  description?: string;
+  category?: string;
+  tags?: string[];
+  whenToUse?: string[];
+  triggerWords?: string[];
+}
+
+interface AIEcosystemSkill {
+  id: string;
+  title: string;
+  category: string;
+  tags: string[];
+}
+
+interface AIEcosystemEdge {
+  sourceId: string;
+  targetId: string;
+  score: number;
+  sharedTags: string[];
+}
+
+interface EcosystemAnalysis {
+  summary: string;
+  strengths: string[];
+  gaps: string[];
+  powerSkillIds: string[];
+  suggestions: Array<{ name: string; category: string; reason: string }>;
+  insight: string;
+}
+
 const TAG_TRANSLATION: Record<string, string> = {
   api: '接口',
   plugin: '插件',
@@ -56,7 +87,7 @@ const TAG_TRANSLATION: Record<string, string> = {
 function getEnvConfig() {
   const apiKey = process.env.SILICONFLOW_API_KEY?.trim();
   const baseUrl = (process.env.SILICONFLOW_BASE_URL?.trim() || 'https://api.siliconflow.cn/v1').replace(/\/+$/, '');
-  const model = process.env.SILICONFLOW_MODEL?.trim() || 'Pro/zai-org/GLM-5.1';
+  const model = process.env.AI_MODEL?.trim() || process.env.SILICONFLOW_MODEL?.trim() || 'Pro/zai-org/GLM-5.1';
   return { apiKey, baseUrl, model };
 }
 
@@ -83,6 +114,13 @@ function normalizeSimpleTag(tag: string): string {
   return TAG_TRANSLATION[cleaned] ?? tag.trim();
 }
 
+function splitSuggestionList(value: string): string[] {
+  return value
+    .split(/\r?\n|[;,，；、/]|(?:\d+\s*[.)、])/g)
+    .map(item => item.trim())
+    .filter(Boolean);
+}
+
 function normalizeSuggestion(item: unknown, fallbackField: string): AIFieldSuggestion | null {
   if (!item || typeof item !== 'object') return null;
   const candidate = item as Record<string, unknown>;
@@ -95,6 +133,25 @@ function normalizeSuggestion(item: unknown, fallbackField: string): AIFieldSugge
       ? candidate.detailedExplanation.trim()
       : '';
   const detailedExplanation = detailedExplanationRaw.slice(0, 220);
+
+  if (field === 'tags' || field === 'whenToUse') {
+    const fromString =
+      typeof suggestion === 'string' && suggestion.trim()
+        ? splitSuggestionList(suggestion).map(tag => (field === 'tags' ? normalizeSimpleTag(tag) : tag))
+        : [];
+    const fromArray = Array.isArray(suggestion)
+      ? suggestion
+          .filter(value => typeof value === 'string')
+          .map(value => (field === 'tags' ? normalizeSimpleTag(value) : value))
+          .map(value => value.trim())
+          .filter(Boolean)
+      : [];
+    const merged = [...new Set([...fromString, ...fromArray])].slice(0, 6);
+    if (merged.length > 0) {
+      return { field, suggestion: merged, explanation, detailedExplanation };
+    }
+    return null;
+  }
 
   if (typeof suggestion === 'string' && suggestion.trim()) {
     return { field, suggestion: suggestion.trim(), explanation, detailedExplanation };
@@ -345,4 +402,220 @@ export async function suggestPathHelpWithAI(input: PathHelpInput): Promise<PathH
   if (normalized.nextActions.length === 0) normalized.nextActions = fallback.nextActions;
   normalized.likelyPaths = [...new Set([...(input.knownPaths ?? []), ...normalized.likelyPaths, ...fallback.likelyPaths])].slice(0, 6);
   return normalized;
+}
+
+function fallbackExtractSkillMetadata(rawContent: string): AISkillSuggestion {
+  const normalized = rawContent.toLowerCase();
+  const isDesign = normalized.includes('design') || normalized.includes('ux');
+  const isData = normalized.includes('data') || normalized.includes('sql') || normalized.includes('analysis');
+  return {
+    description: '根据原始内容自动整理出的展示摘要，建议人工校对后再保存。',
+    category: isDesign ? '产品设计' : isData ? '数据分析' : '效率流程',
+    tags: ['assistant', 'workflow', 'automation'],
+    whenToUse: ['信息不完整但需要先补齐展示卡片时', '想快速把旧资料转成可浏览技能时'],
+    triggerWords: ['autofill', 'metadata', 'cleanup'],
+  };
+}
+
+function fallbackEcosystemAnalysis(skills: AIEcosystemSkill[], edges: AIEcosystemEdge[]): EcosystemAnalysis {
+  const categoryCount: Record<string, number> = {};
+  const degree: Record<string, number> = {};
+
+  for (const skill of skills) {
+    categoryCount[skill.category] = (categoryCount[skill.category] ?? 0) + 1;
+  }
+
+  for (const edge of edges) {
+    degree[edge.sourceId] = (degree[edge.sourceId] ?? 0) + 1;
+    degree[edge.targetId] = (degree[edge.targetId] ?? 0) + 1;
+  }
+
+  const sortedCategories = Object.entries(categoryCount).sort((a, b) => b[1] - a[1]);
+  const topSkillIds = Object.entries(degree)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([id]) => id);
+
+  const missingCategories = ['编程开发', '内容创作', '数据分析', '产品设计', '效率流程', '商业营销'].filter(
+    category => !categoryCount[category],
+  );
+
+  return {
+    summary: `当前技能库覆盖 ${Object.keys(categoryCount).length} 个分类，共 ${skills.length} 个技能，已经具备可演示的能力资产视图。`,
+    strengths: [
+      `分类覆盖较完整，当前最强方向是“${sortedCategories[0]?.[0] ?? '编程开发'}”。`,
+      `已有 ${edges.length} 条技能关联线，技能之间具备可视化关系。`,
+      '首页、详情、健康检查和市场页已形成完整体验闭环。',
+    ],
+    gaps: [
+      missingCategories.length ? `仍缺少 ${missingCategories.join('、')} 类的代表技能。` : '主要分类已覆盖，可继续提升分类精度和标签质量。',
+      '部分技能元信息仍可继续精炼，尤其是标签和适用场景。',
+      '后续可接入真实在线分析以提升推荐质量。',
+    ],
+    powerSkillIds: topSkillIds.length ? topSkillIds : skills.slice(0, 3).map(skill => skill.id),
+    suggestions: [
+      { name: 'Prompt Library Manager', category: '效率流程', reason: '增强技能资产管理主线' },
+      { name: 'Landing Page Critic', category: '产品设计', reason: '强化展示页打磨能力' },
+      { name: 'Figma to React', category: '编程开发', reason: '补强设计到实现链路' },
+      { name: 'Content Calendar', category: '商业营销', reason: '补齐增长运营能力' },
+    ],
+    insight: '当前阶段建议继续强化“可展示感 + 可管理感”，把体验闭环先做深，再扩展复杂后端能力。',
+  };
+}
+
+export async function extractSkillMetadataWithAI(rawContent: string): Promise<AISkillSuggestion> {
+  const { apiKey, baseUrl, model } = getEnvConfig();
+  if (!apiKey) return fallbackExtractSkillMetadata(rawContent);
+
+  const response = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      temperature: 0.2,
+      max_tokens: 900,
+      messages: [
+        {
+          role: 'system',
+          content:
+            '你是技能元信息提取助手。仅输出 JSON 对象，格式为 {description,category,tags,whenToUse,triggerWords}。' +
+            '面向非技术用户，中文简洁可读。',
+        },
+        {
+          role: 'user',
+          content:
+            `请从以下技能内容提取元信息：\n${rawContent.slice(0, 7000)}\n\n` +
+            '要求：\n' +
+            '1) category 只能从 编程开发/内容创作/数据分析/产品设计/效率流程/商业营销/其他 中选择。\n' +
+            '2) tags 与 triggerWords 各给 3-8 个短词。\n' +
+            '3) whenToUse 给 2-4 条生活化或工作化场景。\n' +
+            '4) 仅输出 JSON。',
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) return fallbackExtractSkillMetadata(rawContent);
+  const data = (await response.json()) as SiliconFlowResponse;
+  const content = data.choices?.[0]?.message?.content?.trim();
+  if (!content) return fallbackExtractSkillMetadata(rawContent);
+  const parsed = tryParseJson(content);
+  if (!parsed || typeof parsed !== 'object') return fallbackExtractSkillMetadata(rawContent);
+  const candidate = parsed as Record<string, unknown>;
+
+  const normalizeList = (value: unknown, limit = 8): string[] =>
+    (Array.isArray(value) ? value : typeof value === 'string' ? splitSuggestionList(value) : [])
+      .filter(item => typeof item === 'string')
+      .map(item => String(item).trim())
+      .filter(Boolean)
+      .slice(0, limit);
+
+  const result: AISkillSuggestion = {
+    description: typeof candidate.description === 'string' ? candidate.description.trim() : undefined,
+    category: typeof candidate.category === 'string' ? candidate.category.trim() : undefined,
+    tags: normalizeList(candidate.tags, 8),
+    whenToUse: normalizeList(candidate.whenToUse, 4),
+    triggerWords: normalizeList(candidate.triggerWords, 8),
+  };
+
+  if (!result.description && !result.category && (result.tags?.length ?? 0) === 0 && (result.whenToUse?.length ?? 0) === 0) {
+    return fallbackExtractSkillMetadata(rawContent);
+  }
+
+  return result;
+}
+
+export async function analyzeSkillEcosystemWithAI(input: {
+  skills: AIEcosystemSkill[];
+  edges: AIEcosystemEdge[];
+}): Promise<EcosystemAnalysis> {
+  const { apiKey, baseUrl, model } = getEnvConfig();
+  if (!apiKey) return fallbackEcosystemAnalysis(input.skills, input.edges);
+
+  const payload = {
+    skills: input.skills.slice(0, 300),
+    edges: input.edges.slice(0, 1200),
+  };
+
+  const response = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      temperature: 0.2,
+      max_tokens: 1400,
+      messages: [
+        {
+          role: 'system',
+          content:
+            '你是技能生态分析助手。只输出 JSON 对象，格式必须是 ' +
+            '{summary,strengths,gaps,powerSkillIds,suggestions,insight}。' +
+            '其中 suggestions 为 [{name,category,reason}]。',
+        },
+        {
+          role: 'user',
+          content:
+            `请分析以下技能网络数据：\n${JSON.stringify(payload)}\n\n` +
+            '要求：\n' +
+            '1) strengths/gaps 各给 2-4 条。\n' +
+            '2) powerSkillIds 从给定 skills.id 中选择 1-5 个。\n' +
+            '3) suggestions 给 2-5 条可补充方向。\n' +
+            '4) 语言简洁，面向产品演示场景。\n' +
+            '5) 仅输出 JSON。',
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) return fallbackEcosystemAnalysis(input.skills, input.edges);
+  const data = (await response.json()) as SiliconFlowResponse;
+  const content = data.choices?.[0]?.message?.content?.trim();
+  if (!content) return fallbackEcosystemAnalysis(input.skills, input.edges);
+  const parsed = tryParseJson(content);
+  if (!parsed || typeof parsed !== 'object') return fallbackEcosystemAnalysis(input.skills, input.edges);
+
+  const candidate = parsed as Partial<EcosystemAnalysis>;
+  const fallback = fallbackEcosystemAnalysis(input.skills, input.edges);
+  const allSkillIds = new Set(input.skills.map(skill => skill.id));
+  const listOfStrings = (value: unknown, limit: number) =>
+    (Array.isArray(value) ? value : [])
+      .filter(item => typeof item === 'string')
+      .map(item => item.trim())
+      .filter(Boolean)
+      .slice(0, limit);
+
+  const suggestions = (Array.isArray(candidate.suggestions) ? candidate.suggestions : [])
+    .map(item => {
+      if (!item || typeof item !== 'object') return null;
+      const row = item as Record<string, unknown>;
+      const name = typeof row.name === 'string' ? row.name.trim() : '';
+      const category = typeof row.category === 'string' ? row.category.trim() : '';
+      const reason = typeof row.reason === 'string' ? row.reason.trim() : '';
+      if (!name || !category || !reason) return null;
+      return { name, category, reason };
+    })
+    .filter((item): item is { name: string; category: string; reason: string } => item !== null)
+    .slice(0, 5);
+
+  const result: EcosystemAnalysis = {
+    summary: typeof candidate.summary === 'string' && candidate.summary.trim() ? candidate.summary.trim() : fallback.summary,
+    strengths: listOfStrings(candidate.strengths, 4),
+    gaps: listOfStrings(candidate.gaps, 4),
+    powerSkillIds: listOfStrings(candidate.powerSkillIds, 5).filter(id => allSkillIds.has(id)),
+    suggestions,
+    insight: typeof candidate.insight === 'string' && candidate.insight.trim() ? candidate.insight.trim() : fallback.insight,
+  };
+
+  if (result.strengths.length === 0) result.strengths = fallback.strengths;
+  if (result.gaps.length === 0) result.gaps = fallback.gaps;
+  if (result.powerSkillIds.length === 0) result.powerSkillIds = fallback.powerSkillIds;
+  if (result.suggestions.length === 0) result.suggestions = fallback.suggestions;
+
+  return result;
 }

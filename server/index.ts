@@ -2,7 +2,7 @@ import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
 import { scanContext } from './config';
-import { suggestFieldFixesWithAI, suggestPathHelpWithAI } from './ai-service';
+import { analyzeSkillEcosystemWithAI, extractSkillMetadataWithAI, suggestFieldFixesWithAI, suggestPathHelpWithAI } from './ai-service';
 import { generateChineseMetadata } from './localizer';
 import { ensureMetadataFile } from './metadata-store';
 import { scanSkillRoots } from './skill-scanner';
@@ -163,6 +163,50 @@ app.post('/api/ai/path-help', async (req, res) => {
     res.json({ success: true, data: result });
   } catch {
     res.status(500).json({ success: false, error: 'Failed to generate path help' });
+  }
+});
+
+app.post('/api/ai/extract-skill-metadata', async (req, res) => {
+  try {
+    const { rawContent } = req.body ?? {};
+    if (typeof rawContent !== 'string' || !rawContent.trim()) {
+      res.status(400).json({ success: false, error: 'Invalid request body: rawContent is required' });
+      return;
+    }
+
+    const result = await extractSkillMetadataWithAI(rawContent);
+    res.json({ success: true, data: result });
+  } catch {
+    res.status(500).json({ success: false, error: 'Failed to extract metadata' });
+  }
+});
+
+app.post('/api/ai/analyze-ecosystem', async (req, res) => {
+  try {
+    const { skills, edges } = req.body ?? {};
+    if (!Array.isArray(skills) || !Array.isArray(edges)) {
+      res.status(400).json({ success: false, error: 'Invalid request body: skills[] and edges[] are required' });
+      return;
+    }
+
+    const result = await analyzeSkillEcosystemWithAI({
+      skills: skills.map((item: any) => ({
+        id: String(item?.id ?? ''),
+        title: String(item?.title ?? ''),
+        category: String(item?.category ?? '其他'),
+        tags: Array.isArray(item?.tags) ? item.tags.map((tag: unknown) => String(tag)) : [],
+      })),
+      edges: edges.map((item: any) => ({
+        sourceId: String(item?.sourceId ?? ''),
+        targetId: String(item?.targetId ?? ''),
+        score: Number(item?.score ?? 0),
+        sharedTags: Array.isArray(item?.sharedTags) ? item.sharedTags.map((tag: unknown) => String(tag)) : [],
+      })),
+    });
+
+    res.json({ success: true, data: result });
+  } catch {
+    res.status(500).json({ success: false, error: 'Failed to analyze ecosystem' });
   }
 });
 

@@ -36,18 +36,31 @@ export interface AIPathHelpResult {
   confidence: 'low' | 'medium' | 'high';
 }
 
-const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '');
+
+function buildUrl(path: string): string {
+  return API_BASE_URL ? `${API_BASE_URL}${path}` : path;
+}
 
 async function request<T>(path: string, body: unknown): Promise<T | null> {
   try {
-    const response = await fetch(path, {
+    const response = await fetch(buildUrl(path), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
 
     if (!response.ok) return null;
-    const payload = (await response.json()) as { success?: boolean; data?: T };
+    const rawText = await response.text();
+    let payload: { success?: boolean; data?: T } | null = null;
+    if (rawText) {
+      try {
+        payload = JSON.parse(rawText) as { success?: boolean; data?: T };
+      } catch {
+        payload = null;
+      }
+    }
+    if (!payload) return null;
     return payload.success ? (payload.data ?? null) : null;
   } catch {
     return null;
@@ -55,15 +68,12 @@ async function request<T>(path: string, body: unknown): Promise<T | null> {
 }
 
 export async function extractSkillMetadata(rawContent: string): Promise<AISkillSuggestion> {
-  await sleep(200);
-
-  const normalized = rawContent.toLowerCase();
-  const isDesign = normalized.includes('design') || normalized.includes('ux');
-  const isData = normalized.includes('data') || normalized.includes('sql') || normalized.includes('analysis');
+  const aiResult = await request<AISkillSuggestion>('/api/ai/extract-skill-metadata', { rawContent });
+  if (aiResult) return aiResult;
 
   return {
     description: '根据原始内容自动整理出的展示摘要，建议人工校对后再保存。',
-    category: isDesign ? '产品设计' : isData ? '数据分析' : '效率流程',
+    category: '效率流程',
     tags: ['assistant', 'workflow', 'automation'],
     whenToUse: ['信息不完整但需要先补齐展示卡片时', '想快速把旧资料转成可浏览技能时'],
     triggerWords: ['autofill', 'metadata', 'cleanup'],
@@ -129,44 +139,16 @@ export async function suggestFieldFixes(skillTitle: string, rawContent: string, 
 }
 
 export async function analyzeSkillEcosystem(skills: Skill[], edges: SkillEdge[]): Promise<EcosystemAnalysis> {
-  await sleep(320);
-
-  const categoryCount: Record<string, number> = {};
-  const degree: Record<string, number> = {};
-
-  skills.forEach(skill => {
-    categoryCount[skill.category] = (categoryCount[skill.category] ?? 0) + 1;
-  });
-
-  edges.forEach(edge => {
-    degree[edge.sourceId] = (degree[edge.sourceId] ?? 0) + 1;
-    degree[edge.targetId] = (degree[edge.targetId] ?? 0) + 1;
-  });
-
-  const sortedCategories = Object.entries(categoryCount).sort((a, b) => b[1] - a[1]);
-  const topSkillIds = Object.entries(degree).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([id]) => id);
-  const missingCategories = ['编程开发', '内容创作', '数据分析', '产品设计', '效率流程', '商业营销'].filter(category => !categoryCount[category]);
+  const aiResult = await request<EcosystemAnalysis>('/api/ai/analyze-ecosystem', { skills, edges });
+  if (aiResult) return aiResult;
 
   return {
-    summary: `当前技能库覆盖 ${Object.keys(categoryCount).length} 个分类，共 ${skills.length} 个技能，已经具备可演示的能力资产视图。`,
-    strengths: [
-      `分类覆盖较完整，当前最强方向是“${sortedCategories[0]?.[0] ?? '编程开发'}”。`,
-      `已有 ${edges.length} 条技能关联线，技能之间具备可视化关系。`,
-      '首页、详情、健康检查和市场页已形成完整体验闭环。',
-    ],
-    gaps: [
-      missingCategories.length ? `仍缺少 ${missingCategories.join('、')} 类的代表技能。` : '主要分类已覆盖，可继续提升分类精度和标签质量。',
-      '部分技能元信息仍可继续精炼，尤其是标签和适用场景。',
-      '后续可接入真实在线分析以提升推荐质量。',
-    ],
-    powerSkillIds: topSkillIds.length ? topSkillIds : skills.slice(0, 3).map(skill => skill.id),
-    suggestions: [
-      { name: 'Prompt Library Manager', category: '效率流程', reason: '增强技能资产管理主线' },
-      { name: 'Landing Page Critic', category: '产品设计', reason: '强化展示页打磨能力' },
-      { name: 'Figma to React', category: '编程开发', reason: '补强设计到实现链路' },
-      { name: 'Content Calendar', category: '商业营销', reason: '补齐增长运营能力' },
-    ],
-    insight: '当前阶段建议继续强化“可展示感 + 可管理感”，把体验闭环先做深，再扩展复杂后端能力。',
+    summary: `当前技能库共 ${skills.length} 个技能，AI 分析暂不可用，先展示基础结果。`,
+    strengths: ['技能数据已加载，可继续进行分析。'],
+    gaps: ['AI 服务暂时不可用，请稍后重试。'],
+    powerSkillIds: skills.slice(0, 3).map(skill => skill.id),
+    suggestions: [],
+    insight: '建议先检查后端 API 与密钥配置，再重新分析。',
   };
 }
 
