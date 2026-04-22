@@ -22,6 +22,13 @@ export interface ScanContext {
   scanRoots: string[];
   fallbackScanRoots: string[];
   metadataFilePath: string;
+  importedSkillsFilePath: string;
+}
+
+export interface ImportedSkillsFile {
+  version: number;
+  updatedAt: string;
+  skills: Skill[];
 }
 
 export interface ParsedSkillFile extends Skill {

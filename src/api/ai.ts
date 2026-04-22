@@ -24,6 +24,18 @@ export interface EcosystemAnalysis {
   insight: string;
 }
 
+export interface AIPathHelpResult {
+  summary: string;
+  nextActions: string[];
+  likelyPaths: string[];
+  showHiddenSteps: {
+    windows: string[];
+    macos: string[];
+    linux: string[];
+  };
+  confidence: 'low' | 'medium' | 'high';
+}
+
 const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
 async function request<T>(path: string, body: unknown): Promise<T | null> {
@@ -155,5 +167,28 @@ export async function analyzeSkillEcosystem(skills: Skill[], edges: SkillEdge[])
       { name: 'Content Calendar', category: '商业营销', reason: '补齐增长运营能力' },
     ],
     insight: '当前阶段建议继续强化“可展示感 + 可管理感”，把体验闭环先做深，再扩展复杂后端能力。',
+  };
+}
+
+export async function askPathHelp(input: {
+  message: string;
+  source?: 'codex' | 'cursor' | 'claude' | 'unknown';
+  os?: 'windows' | 'macos' | 'linux' | 'unknown';
+  knownPaths?: string[];
+  lastError?: string;
+}): Promise<AIPathHelpResult> {
+  const aiResult = await request<AIPathHelpResult>('/api/ai/path-help', input);
+  if (aiResult) return aiResult;
+
+  return {
+    summary: '我先给你通用排查步骤，你按顺序试一下。',
+    nextActions: ['先显示隐藏文件', '再尝试常见路径', '最后回到页面选择目录导入'],
+    likelyPaths: input.knownPaths?.slice(0, 6) ?? [],
+    showHiddenSteps: {
+      windows: ['文件资源管理器 -> 查看 -> 显示 -> 隐藏的项目'],
+      macos: ['Finder 按 Command + Shift + .'],
+      linux: ['文件管理器按 Ctrl + H'],
+    },
+    confidence: 'medium',
   };
 }

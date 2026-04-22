@@ -453,12 +453,22 @@ export default function RightPanel({ skill, onClose, onSkillUpdate, autoEdit, on
 
                 {!isEditing && (
                   <Section title="来源路径">
-                    <div className="flex items-center justify-between gap-2 bg-surface-code rounded-md px-3 py-2 border border-outline-subtle">
-                      <code className="font-mono text-[11px] text-primary/80 truncate">{skill.sourcePath}</code>
-                      <button onClick={copyPath} className="shrink-0 text-on-surface-muted hover:text-on-surface transition-colors">
-                        <Copy className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                    {(skill.sourcePaths?.length ?? 0) > 1 ? (
+                      <div className="space-y-1.5">
+                        {skill.sourcePaths?.map(pathItem => (
+                          <div key={pathItem} className="flex items-center justify-between gap-2 bg-surface-code rounded-md px-3 py-2 border border-outline-subtle">
+                            <code className="font-mono text-[11px] text-primary/80 truncate">{pathItem}</code>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between gap-2 bg-surface-code rounded-md px-3 py-2 border border-outline-subtle">
+                        <code className="font-mono text-[11px] text-primary/80 truncate">{skill.sourcePath}</code>
+                        <button onClick={copyPath} className="shrink-0 text-on-surface-muted hover:text-on-surface transition-colors">
+                          <Copy className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
                   </Section>
                 )}
 

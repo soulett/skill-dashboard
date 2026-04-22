@@ -4,6 +4,14 @@ interface SuggestFieldFixesInput {
   failedFields: string[];
 }
 
+interface PathHelpInput {
+  message: string;
+  source?: 'codex' | 'cursor' | 'claude' | 'unknown';
+  os?: 'windows' | 'macos' | 'linux' | 'unknown';
+  knownPaths?: string[];
+  lastError?: string;
+}
+
 interface AIFieldSuggestion {
   field: string;
   suggestion: string | string[];
@@ -17,6 +25,14 @@ interface SiliconFlowResponse {
       content?: string;
     };
   }>;
+}
+
+interface PathHelpResponse {
+  summary: string;
+  nextActions: string[];
+  likelyPaths: string[];
+  showHiddenSteps: Record<'windows' | 'macos' | 'linux', string[]>;
+  confidence: 'low' | 'medium' | 'high';
 }
 
 const TAG_TRANSLATION: Record<string, string> = {
@@ -136,6 +152,56 @@ function fallbackSuggestions(skillTitle: string, failedFields: string[]): AIFiel
   return result;
 }
 
+function detectSourceFromText(text: string): 'codex' | 'cursor' | 'claude' | 'unknown' {
+  const normalized = text.toLowerCase();
+  if (normalized.includes('cursor')) return 'cursor';
+  if (normalized.includes('codex')) return 'codex';
+  if (normalized.includes('claude')) return 'claude';
+  return 'unknown';
+}
+
+function detectOsFromText(text: string): 'windows' | 'macos' | 'linux' | 'unknown' {
+  const normalized = text.toLowerCase();
+  if (normalized.includes('windows') || normalized.includes('win11') || normalized.includes('win10')) return 'windows';
+  if (normalized.includes('mac') || normalized.includes('osx') || normalized.includes('macos')) return 'macos';
+  if (normalized.includes('linux') || normalized.includes('ubuntu')) return 'linux';
+  return 'unknown';
+}
+
+function fallbackPathHelp(input: PathHelpInput): PathHelpResponse {
+  const text = `${input.message}\n${input.lastError ?? ''}`;
+  const source = input.source && input.source !== 'unknown' ? input.source : detectSourceFromText(text);
+  const os = input.os && input.os !== 'unknown' ? input.os : detectOsFromText(text);
+
+  const sourcePaths: Record<'codex' | 'cursor' | 'claude' | 'unknown', string[]> = {
+    codex: ['~/.codex/skills', 'C:\\Users\\<用户名>\\.codex\\skills'],
+    cursor: ['~/.cursor/skills', '~/.cursor/skills-cursor', '<project>/.cursor/skills'],
+    claude: ['~/.claude/skills', '<project>/.claude/skills', 'C:\\Users\\<用户名>\\.claude\\skills'],
+    unknown: ['~/.codex/skills', '~/.cursor/skills', '~/.claude/skills'],
+  };
+
+  const osSteps: Record<'windows' | 'macos' | 'linux', string[]> = {
+    windows: ['打开文件资源管理器', '点击“查看”->“显示”->勾选“隐藏的项目”', '进入候选路径后选择对应目录导入'],
+    macos: ['打开 Finder', '按 Command + Shift + . 显示隐藏文件', '进入候选路径后选择对应目录导入'],
+    linux: ['打开文件管理器', '按 Ctrl + H 显示隐藏文件', '进入候选路径后选择对应目录导入'],
+  };
+
+  const likelyPaths = [...new Set([...(input.knownPaths ?? []), ...sourcePaths[source]])].slice(0, 6);
+  const nextActions = [
+    '先在文件选择器显示隐藏文件',
+    `优先尝试 ${source === 'unknown' ? '与你工具对应' : source} 的候选路径`,
+    '找到目录后回到页面点击“选择目录导入”',
+  ];
+
+  return {
+    summary: os === 'unknown' ? '我先给你最可能的目录和通用排查步骤。' : `先按 ${os === 'windows' ? 'Windows' : os === 'macos' ? 'macOS' : 'Linux'} 的隐藏文件步骤操作，再试候选路径。`,
+    nextActions,
+    likelyPaths,
+    showHiddenSteps: osSteps,
+    confidence: source === 'unknown' || os === 'unknown' ? 'medium' : 'high',
+  };
+}
+
 export async function suggestFieldFixesWithAI(input: SuggestFieldFixesInput): Promise<AIFieldSuggestion[]> {
   const { apiKey, baseUrl, model } = getEnvConfig();
   const { skillTitle, rawContent, failedFields } = input;
@@ -198,4 +264,85 @@ export async function suggestFieldFixesWithAI(input: SuggestFieldFixesInput): Pr
     .filter(item => failedFields.includes(item.field));
 
   return normalized.length > 0 ? normalized : fallbackSuggestions(skillTitle, failedFields);
+}
+
+export async function suggestPathHelpWithAI(input: PathHelpInput): Promise<PathHelpResponse> {
+  const { apiKey, baseUrl, model } = getEnvConfig();
+
+  if (!apiKey) return fallbackPathHelp(input);
+
+  const payload = {
+    message: input.message,
+    source: input.source ?? 'unknown',
+    os: input.os ?? 'unknown',
+    known_paths: input.knownPaths ?? [],
+    last_error: input.lastError ?? '',
+  };
+
+  const response = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      temperature: 0.2,
+      max_tokens: 1200,
+      messages: [
+        {
+          role: 'system',
+          content:
+            '你是“本地路径定位助手”，面向非技术用户。你必须只输出 JSON 对象，不能输出任何额外文字。' +
+            'JSON 结构必须是 {summary,nextActions,likelyPaths,showHiddenSteps,confidence}。' +
+            '其中 nextActions 和 likelyPaths 为字符串数组；showHiddenSteps 为 windows/macos/linux 三个数组。',
+        },
+        {
+          role: 'user',
+          content:
+            `请根据下面信息生成定位建议：\n${JSON.stringify(payload, null, 2)}\n\n` +
+            '要求：\n' +
+            '1) 先给可执行步骤，后给解释；\n' +
+            '2) likelyPaths 最多 6 条，优先高概率路径；\n' +
+            '3) 语言简短、口语化、面向小白；\n' +
+            '4) confidence 只能是 low/medium/high；\n' +
+            '5) 仅输出 JSON。',
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) return fallbackPathHelp(input);
+
+  const data = (await response.json()) as SiliconFlowResponse;
+  const content = data.choices?.[0]?.message?.content?.trim();
+  if (!content) return fallbackPathHelp(input);
+  const parsed = tryParseJson(content);
+  if (!parsed || typeof parsed !== 'object') return fallbackPathHelp(input);
+
+  const candidate = parsed as Partial<PathHelpResponse>;
+  const fallback = fallbackPathHelp(input);
+
+  const normalized: PathHelpResponse = {
+    summary: typeof candidate.summary === 'string' && candidate.summary.trim() ? candidate.summary.trim() : fallback.summary,
+    nextActions: Array.isArray(candidate.nextActions)
+      ? candidate.nextActions.filter(item => typeof item === 'string').map(item => item.trim()).filter(Boolean).slice(0, 5)
+      : fallback.nextActions,
+    likelyPaths: Array.isArray(candidate.likelyPaths)
+      ? candidate.likelyPaths.filter(item => typeof item === 'string').map(item => item.trim()).filter(Boolean).slice(0, 6)
+      : fallback.likelyPaths,
+    showHiddenSteps:
+      candidate.showHiddenSteps &&
+      typeof candidate.showHiddenSteps === 'object' &&
+      Array.isArray((candidate.showHiddenSteps as any).windows) &&
+      Array.isArray((candidate.showHiddenSteps as any).macos) &&
+      Array.isArray((candidate.showHiddenSteps as any).linux)
+        ? (candidate.showHiddenSteps as PathHelpResponse['showHiddenSteps'])
+        : fallback.showHiddenSteps,
+    confidence: candidate.confidence === 'low' || candidate.confidence === 'medium' || candidate.confidence === 'high' ? candidate.confidence : fallback.confidence,
+  };
+
+  if (normalized.nextActions.length === 0) normalized.nextActions = fallback.nextActions;
+  normalized.likelyPaths = [...new Set([...(input.knownPaths ?? []), ...normalized.likelyPaths, ...fallback.likelyPaths])].slice(0, 6);
+  return normalized;
 }

@@ -8,7 +8,6 @@ const defaultCodexSkillsRoot = path.join(os.homedir(), '.codex', 'skills');
 const defaultCursorSkillsRoot = path.join(os.homedir(), '.cursor', 'skills');
 const defaultCursorSkillsCursorRoot = path.join(os.homedir(), '.cursor', 'skills-cursor');
 const workspaceCursorSkillsRoot = path.join(workspaceRoot, '.cursor', 'skills');
-const defaultCursorPluginsRoot = path.join(os.homedir(), '.cursor', 'plugins');
 const defaultClaudeSkillsRoot = path.join(os.homedir(), '.claude', 'skills');
 const demoSkillsRoot = path.join(workspaceRoot, 'skills-source');
 
@@ -17,7 +16,7 @@ export const SOURCE_SCAN_ROOTS = [
   {
     source: 'cursor',
     label: 'Cursor',
-    paths: [defaultCursorSkillsRoot, defaultCursorSkillsCursorRoot, workspaceCursorSkillsRoot, defaultCursorPluginsRoot],
+    paths: [defaultCursorSkillsRoot, defaultCursorSkillsCursorRoot, workspaceCursorSkillsRoot],
   },
   { source: 'claude', label: 'Claude', paths: [defaultClaudeSkillsRoot] },
 ] as const;
@@ -29,7 +28,6 @@ function parseScanRoots(value?: string): string[] {
       defaultCursorSkillsRoot,
       defaultCursorSkillsCursorRoot,
       workspaceCursorSkillsRoot,
-      defaultCursorPluginsRoot,
       defaultClaudeSkillsRoot,
     ];
   }
@@ -45,6 +43,7 @@ export const scanContext: ScanContext = {
   scanRoots: parseScanRoots(process.env.SKILL_DASHBOARD_SCAN_ROOTS),
   fallbackScanRoots: [demoSkillsRoot],
   metadataFilePath: path.join(dataDir, 'metadata.json'),
+  importedSkillsFilePath: path.join(dataDir, 'imported-skills.json'),
 };
 
 export const SUPPORTED_SKILL_FILES = new Set(['SKILL.md', 'skill.md']);

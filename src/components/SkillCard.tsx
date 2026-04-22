@@ -66,6 +66,7 @@ export default function SkillCard({ skill, isSelected, animationDelay = 0, onCli
       <div className="flex items-center gap-1.5 mb-2">
         <span className={`inline-block text-[11px] font-medium px-1.5 py-0.5 rounded ${colors.tag}`}>{skill.category}</span>
         <span className={`inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded border ${sourceMeta.chipClass}`}>{sourceMeta.label}</span>
+        {(skill.sourceCount ?? 1) > 1 && <span className="text-[10px] text-on-surface-muted">+{(skill.sourceCount ?? 1) - 1} 来源</span>}
       </div>
 
       <p className="text-[13px] text-on-surface-variant leading-relaxed line-clamp-3 mb-4">{skill.description}</p>

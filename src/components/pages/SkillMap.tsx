@@ -23,6 +23,7 @@ const CATEGORY_STYLE: Record<string, { fill: string; stroke: string; label: stri
 const W = 900;
 const H = 540;
 const NODE_R = 18;
+const NODE_R_MAX = 26;
 const CLUSTER_POSITIONS = [
   { x: 175, y: 155 },
   { x: 725, y: 155 },
@@ -70,6 +71,27 @@ function nodePositions(count: number, cx: number, cy: number): Array<{ x: number
   }
 
   return positions;
+}
+
+function getAdaptiveNodeRadius(title: string) {
+  const length = title.trim().length;
+  const extra = Math.min(8, Math.max(0, Math.ceil((length - 8) / 4)));
+  return Math.min(NODE_R + extra, NODE_R_MAX);
+}
+
+function toTwoLineLabel(title: string, radius: number): { line1: string; line2?: string } {
+  const safeTitle = title.trim() || 'Untitled';
+  const charsPerLine = Math.max(4, Math.min(9, Math.floor(radius / 2) + 1));
+  const maxChars = charsPerLine * 2;
+
+  if (safeTitle.length <= charsPerLine) {
+    return { line1: safeTitle };
+  }
+
+  const clipped = safeTitle.length > maxChars ? `${safeTitle.slice(0, maxChars - 1)}…` : safeTitle;
+  const line1 = clipped.slice(0, charsPerLine);
+  const line2 = clipped.slice(charsPerLine);
+  return { line1, line2: line2 || undefined };
 }
 
 export default function SkillMap({ skills, onNavigateToSkill }: SkillMapProps) {
@@ -209,6 +231,9 @@ export default function SkillMap({ skills, onNavigateToSkill }: SkillMapProps) {
               const isHovered = hoveredId === skill.id;
               const isRelated = hoveredEdges.has(skill.id);
               const isDimmed = hoveredId && !isHovered && !isRelated;
+              const baseRadius = getAdaptiveNodeRadius(skill.title);
+              const nodeRadius = isHovered ? Math.min(baseRadius * 1.16, NODE_R_MAX + 4) : baseRadius;
+              const label = toTwoLineLabel(skill.title, baseRadius);
 
               return (
                 <g
@@ -221,7 +246,7 @@ export default function SkillMap({ skills, onNavigateToSkill }: SkillMapProps) {
                   <circle
                     cx={position.x}
                     cy={position.y}
-                    r={isHovered ? NODE_R * 1.3 : NODE_R}
+                    r={nodeRadius}
                     fill={style.fill}
                     stroke={isHovered || isRelated ? style.stroke : `${style.stroke}60`}
                     strokeWidth={isHovered ? 2 : 1}
@@ -230,16 +255,49 @@ export default function SkillMap({ skills, onNavigateToSkill }: SkillMapProps) {
                   />
                   <text
                     x={position.x}
-                    y={position.y + 1}
+                    y={position.y}
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fill={style.label}
-                    fontSize={isHovered ? '9' : '8'}
+                    fontSize={isHovered ? '8' : '7.5'}
                     opacity={isDimmed ? 0.3 : 0.9}
                     style={{ transition: 'opacity 0.15s', pointerEvents: 'none', userSelect: 'none' }}
                   >
-                    {skill.title.length > 8 ? `${skill.title.slice(0, 8)}...` : skill.title}
+                    <tspan x={position.x} dy={label.line2 ? '-0.35em' : '0'}>
+                      {label.line1}
+                    </tspan>
+                    {label.line2 && (
+                      <tspan x={position.x} dy="1.1em">
+                        {label.line2}
+                      </tspan>
+                    )}
                   </text>
+                  <title>{skill.title}</title>
+                  {isHovered && (
+                    <g style={{ pointerEvents: 'none' }}>
+                      <rect
+                        x={position.x - 56}
+                        y={position.y - nodeRadius - 24}
+                        width={112}
+                        height={16}
+                        rx={8}
+                        fill="rgba(9, 16, 35, 0.92)"
+                        stroke={style.stroke}
+                        strokeOpacity={0.45}
+                        strokeWidth={0.8}
+                      />
+                      <text
+                        x={position.x}
+                        y={position.y - nodeRadius - 16}
+                        textAnchor="middle"
+                        fill={style.label}
+                        fontSize="7.5"
+                        style={{ userSelect: 'none' }}
+                      >
+                        {skill.title}
+                      </text>
+                    </g>
+                  )}
                 </g>
               );
             }),

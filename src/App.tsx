@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { AlertCircle, BarChart3, CheckCircle2, Code2, FolderSearch, GitMerge, Layers, LayoutDashboard, Megaphone, Package, PenLine } from 'lucide-react';
+import { Bot, BarChart3, CheckCircle2, Code2, FolderSearch, GitMerge, Layers, LayoutDashboard, Megaphone, Package, PenLine } from 'lucide-react';
 import { api } from './api';
+import { AIPathHelpResult, askPathHelp } from './api/ai';
 import RightPanel from './components/RightPanel';
 import Sidebar from './components/Sidebar';
 import SkillCard from './components/SkillCard';
@@ -36,7 +37,7 @@ const SKILL_ROOT_GUIDES = [
   {
     id: 'cursor',
     name: 'Cursor',
-    paths: ['~/.cursor/skills-cursor', '~/.cursor/skills', '<workspace>/.cursor/skills', '~/.cursor/plugins/**/skills'],
+    paths: ['~/.cursor/skills-cursor', '~/.cursor/skills', '<workspace>/.cursor/skills'],
   },
   {
     id: 'claude',
@@ -52,6 +53,140 @@ const SOURCE_FILTER_CONFIG: Array<{ id: SourceFilter; label: string }> = [
   { id: 'claude', label: 'Claude' },
   { id: 'unknown', label: '其他' },
 ];
+
+type ImportSource = 'codex' | 'cursor' | 'claude';
+
+interface LocalImportScanResult {
+  skills: Skill[];
+  errors: string[];
+}
+
+type ImportUiState = 'idle' | 'success' | 'failed';
+
+function maskPathForDisplay(input: string): string {
+  const normalized = input.replaceAll('/', '\\');
+  let output = normalized;
+
+  output = output.replace(/^[A-Za-z]:\\Users\\[^\\]+/i, match => match.replace(/\\[^\\]+$/, '\\<用户名>'));
+  output = output.replace(/\\AI-Coding\\skill dashboard/gi, '\\<workspace>');
+  output = output.replace(/^local:\\\\(codex|cursor|claude)\\\\[^\\]+\\\\/i, (_m, source) => `local://${source}/<已选目录>/`);
+
+  if (output.startsWith('\\\\') || output.startsWith('/')) {
+    output = output.replace(/^\/Users\/[^/]+/i, '/Users/<用户名>');
+    output = output.replace(/^\/home\/[^/]+/i, '/home/<用户名>');
+  }
+
+  return output;
+}
+
+function parseFrontmatter(raw: string): Record<string, string> {
+  const match = raw.match(/^---\s*\r?\n([\s\S]*?)\r?\n---/);
+  if (!match) return {};
+  return match[1]
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(Boolean)
+    .reduce<Record<string, string>>((acc, line) => {
+      const idx = line.indexOf(':');
+      if (idx === -1) return acc;
+      acc[line.slice(0, idx).trim().toLowerCase()] = line.slice(idx + 1).trim().replace(/^["']|["']$/g, '');
+      return acc;
+    }, {});
+}
+
+function firstDescriptionLine(raw: string): string {
+  const contentWithoutFrontmatter = raw.replace(/^---\s*\r?\n[\s\S]*?\r?\n---\s*/m, '');
+  const line = contentWithoutFrontmatter
+    .split(/\r?\n/)
+    .map(item => item.trim())
+    .find(item => item && !item.startsWith('#') && !item.startsWith('-'));
+  return line?.slice(0, 140) ?? '待补充描述';
+}
+
+function extractTags(raw: string, frontmatter: Record<string, string>): string[] {
+  const tagValue = frontmatter.tags;
+  if (tagValue) {
+    const normalized = tagValue.replace(/^\[|\]$/g, '');
+    return normalized
+      .split(',')
+      .map(item => item.trim().replace(/^["']|["']$/g, ''))
+      .filter(Boolean)
+      .slice(0, 8);
+  }
+
+  const text = raw.toLowerCase();
+  const candidates = ['api', 'openai', 'browser', 'testing', 'playwright', 'workflow', 'automation', 'plugin', 'cursor', 'codex'];
+  return candidates.filter(tag => text.includes(tag)).slice(0, 5);
+}
+
+async function sha256Hex(value: string): Promise<string> {
+  const data = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+async function scanLocalSkillsFromDirectory(directoryHandle: any, source: ImportSource, maxDepth = 4): Promise<LocalImportScanResult> {
+  const skills: Skill[] = [];
+  const errors: string[] = [];
+
+  async function walk(handle: any, relativeParts: string[], depth: number): Promise<void> {
+    if (depth > maxDepth) return;
+    for await (const entry of handle.values()) {
+      if (entry.kind === 'directory') {
+        await walk(entry, [...relativeParts, entry.name], depth + 1);
+        continue;
+      }
+
+      if (entry.kind !== 'file' || entry.name.toLowerCase() !== 'skill.md') continue;
+
+      const relativePath = [...relativeParts, entry.name].join('/');
+      try {
+        const file = await entry.getFile();
+        const raw = await file.text();
+        const frontmatter = parseFrontmatter(raw);
+        const title =
+          frontmatter.title ??
+          frontmatter.name ??
+          raw.match(/^#\s+(.+)$/m)?.[1]?.trim() ??
+          relativeParts.at(-1) ??
+          'Untitled Skill';
+        const description = frontmatter.description ?? firstDescriptionLine(raw);
+        const tags = extractTags(raw, frontmatter);
+        const normalizedRaw = raw.replace(/\r\n/g, '\n').replace(/\s+/g, ' ').trim().toLowerCase();
+        const contentHash = await sha256Hex(normalizedRaw);
+        const now = new Date().toISOString();
+
+        skills.push({
+          id: `local-import/${contentHash.slice(0, 24)}`,
+          title,
+          description,
+          category: '其他',
+          tags,
+          status: 'active',
+          icon: 'Cpu',
+          sourcePath: `local://${source}/${directoryHandle.name}/${relativePath}`,
+          fileName: entry.name,
+          fileType: 'md',
+          updatedAt: file.lastModified ? new Date(file.lastModified).toISOString() : now,
+          scannedAt: now,
+          contentHash,
+          details: {
+            whatItDoes: description,
+            whenToUse: [],
+            triggerWords: tags,
+            rawContent: raw,
+          },
+        });
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        errors.push(`${relativePath}: ${reason}`);
+      }
+    }
+  }
+
+  await walk(directoryHandle, [], 0);
+  return { skills, errors };
+}
 
 function getSourceStatusStyle(status: SourceScanStatus['status']) {
   if (status === 'detected') {
@@ -89,8 +224,20 @@ export default function App() {
   const [autoEditSkillId, setAutoEditSkillId] = useState<string | null>(null);
   const [suppressSkillSelectUntil, setSuppressSkillSelectUntil] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [localizingAll, setLocalizingAll] = useState(false);
+  const [importingSource, setImportingSource] = useState<ImportSource | null>(null);
+  const [importStateBySource, setImportStateBySource] = useState<Record<ImportSource, { state: ImportUiState; importedCount: number }>>({
+    codex: { state: 'idle', importedCount: 0 },
+    cursor: { state: 'idle', importedCount: 0 },
+    claude: { state: 'idle', importedCount: 0 },
+  });
   const [localizeFeedback, setLocalizeFeedback] = useState<string | null>(null);
+  const [importFailures, setImportFailures] = useState<string[]>([]);
+  const [showImportFailures, setShowImportFailures] = useState(false);
+  const [pathHelpQuery, setPathHelpQuery] = useState('');
+  const [pathHelpSource, setPathHelpSource] = useState<ImportSource | 'unknown'>('unknown');
+  const [pathHelpOs, setPathHelpOs] = useState<'windows' | 'macos' | 'linux' | 'unknown'>('unknown');
+  const [pathHelpLoading, setPathHelpLoading] = useState(false);
+  const [pathHelpResult, setPathHelpResult] = useState<AIPathHelpResult | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const loadDashboardData = async () => {
@@ -133,28 +280,85 @@ export default function App() {
     await loadDashboardData();
   };
 
-  const handleLocalizeAll = async () => {
-    setLocalizingAll(true);
-    setLocalizeFeedback(null);
-    const scanResult = await api.triggerScan();
-    if (!scanResult.success) {
-      setLocalizeFeedback('扫描失败，请稍后重试。');
-      setLocalizingAll(false);
+  const handleImportLocalDirectory = async (source: ImportSource) => {
+    if (importingSource) return;
+    const picker = (window as Window & { showDirectoryPicker?: () => Promise<any> }).showDirectoryPicker;
+    if (!picker) {
+      setLocalizeFeedback('当前浏览器不支持目录授权，请使用最新版 Chrome / Edge。');
       return;
     }
 
-    const result = await api.localizeAllSkills();
-    if (result.success) {
-      setSkills(result.data.skills);
-      const updatedCount = 'updatedCount' in result.data ? result.data.updatedCount : result.data.total;
-      const skippedCount = 'skippedCount' in result.data ? result.data.skippedCount : 0;
-      setLocalizeFeedback(`本次已更新 ${updatedCount} 条，跳过 ${skippedCount} 条。`);
-    } else {
-      setLocalizeFeedback('扫描完成，但中文展示更新失败。');
-    }
+    setImportingSource(source);
+    setImportFailures([]);
+    setShowImportFailures(false);
+    setLocalizeFeedback(null);
 
-    await loadDashboardData();
-    setLocalizingAll(false);
+    try {
+      const directoryHandle = await picker();
+      const scanned = await scanLocalSkillsFromDirectory(directoryHandle, source, 4);
+      setImportFailures(scanned.errors);
+      if (scanned.skills.length === 0) {
+        setLocalizeFeedback('未发现可导入的 SKILL.md，请检查目录后重试。');
+        setImportStateBySource(previous => ({
+          ...previous,
+          [source]: { state: 'failed', importedCount: 0 },
+        }));
+        return;
+      }
+
+      const importResult = await api.importSkills(scanned.skills);
+      if (!importResult.success) {
+        setLocalizeFeedback('本地导入失败，请稍后重试。');
+        setImportStateBySource(previous => ({
+          ...previous,
+          [source]: { state: 'failed', importedCount: 0 },
+        }));
+        return;
+      }
+
+      const localizeResult = await api.localizeAllSkills();
+      if (localizeResult.success) {
+        const updatedCount = 'updatedCount' in localizeResult.data ? localizeResult.data.updatedCount : localizeResult.data.total;
+        const skippedCount = 'skippedCount' in localizeResult.data ? localizeResult.data.skippedCount : 0;
+        const failureCount = scanned.errors.length;
+        setLocalizeFeedback(`导入 ${scanned.skills.length} 条，中文更新 ${updatedCount} 条，跳过 ${skippedCount} 条，失败 ${failureCount} 条。`);
+      } else {
+        setLocalizeFeedback(`导入 ${scanned.skills.length} 条成功，但中文展示更新失败。`);
+      }
+
+      setImportStateBySource(previous => ({
+        ...previous,
+        [source]: { state: 'success', importedCount: scanned.skills.length },
+      }));
+
+      await loadDashboardData();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!/aborted|user canceled|cancelled|The user aborted a request/i.test(message)) {
+        setLocalizeFeedback(`导入中断：${message}`);
+        setImportStateBySource(previous => ({
+          ...previous,
+          [source]: { state: 'failed', importedCount: 0 },
+        }));
+      }
+    } finally {
+      setImportingSource(null);
+    }
+  };
+
+  const handleAskPathHelp = async () => {
+    if (!pathHelpQuery.trim()) return;
+    setPathHelpLoading(true);
+    const knownPaths = sourceScanSummary?.sources.flatMap(item => item.paths) ?? [];
+    const result = await askPathHelp({
+      message: pathHelpQuery.trim(),
+      source: pathHelpSource,
+      os: pathHelpOs,
+      knownPaths,
+      lastError: importFailures[0] ?? '',
+    });
+    setPathHelpResult(result);
+    setPathHelpLoading(false);
   };
 
   const handleInstalled = (newSkill: Skill) => {
@@ -210,7 +414,6 @@ export default function App() {
                   selectedSource={selectedSource}
                   selectedSkillId={selectedSkillId}
                   loading={loading}
-                  localizingAll={localizingAll}
                   sourceScanSummary={sourceScanSummary}
                   localizeFeedback={localizeFeedback}
                   onCategoryChange={category => {
@@ -229,7 +432,21 @@ export default function App() {
                     setSelectedSkillId(previous => (previous === id ? null : id));
                   }}
                   onClearSelection={closeSkillPanel}
-                  onLocalizeAll={handleLocalizeAll}
+                  onImportLocalDirectory={handleImportLocalDirectory}
+                  importingSource={importingSource}
+                  importFailures={importFailures}
+                  showImportFailures={showImportFailures}
+                  importStateBySource={importStateBySource}
+                  pathHelpQuery={pathHelpQuery}
+                  pathHelpSource={pathHelpSource}
+                  pathHelpOs={pathHelpOs}
+                  pathHelpLoading={pathHelpLoading}
+                  pathHelpResult={pathHelpResult}
+                  onPathHelpQueryChange={setPathHelpQuery}
+                  onPathHelpSourceChange={setPathHelpSource}
+                  onPathHelpOsChange={setPathHelpOs}
+                  onAskPathHelp={handleAskPathHelp}
+                  onToggleImportFailures={() => setShowImportFailures(value => !value)}
                 />
               </motion.div>
             )}
@@ -277,14 +494,27 @@ function SkillLibraryPage({
   selectedSource,
   selectedSkillId,
   loading,
-  localizingAll,
   sourceScanSummary,
   localizeFeedback,
   onCategoryChange,
   onSourceChange,
   onSkillSelect,
   onClearSelection,
-  onLocalizeAll,
+  onImportLocalDirectory,
+  importingSource,
+  importFailures,
+  showImportFailures,
+  importStateBySource,
+  pathHelpQuery,
+  pathHelpSource,
+  pathHelpOs,
+  pathHelpLoading,
+  pathHelpResult,
+  onPathHelpQueryChange,
+  onPathHelpSourceChange,
+  onPathHelpOsChange,
+  onAskPathHelp,
+  onToggleImportFailures,
 }: {
   skills: Skill[];
   filteredSkills: Skill[];
@@ -294,14 +524,27 @@ function SkillLibraryPage({
   selectedSource: SourceFilter;
   selectedSkillId: string | null;
   loading: boolean;
-  localizingAll: boolean;
   sourceScanSummary: SourceScanSummary | null;
   localizeFeedback: string | null;
   onCategoryChange: (cat: FilterCategory) => void;
   onSourceChange: (source: SourceFilter) => void;
   onSkillSelect: (id: string) => void;
   onClearSelection: () => void;
-  onLocalizeAll: () => void;
+  onImportLocalDirectory: (source: ImportSource) => void;
+  importingSource: ImportSource | null;
+  importFailures: string[];
+  showImportFailures: boolean;
+  importStateBySource: Record<ImportSource, { state: ImportUiState; importedCount: number }>;
+  pathHelpQuery: string;
+  pathHelpSource: ImportSource | 'unknown';
+  pathHelpOs: 'windows' | 'macos' | 'linux' | 'unknown';
+  pathHelpLoading: boolean;
+  pathHelpResult: AIPathHelpResult | null;
+  onPathHelpQueryChange: (value: string) => void;
+  onPathHelpSourceChange: (value: ImportSource | 'unknown') => void;
+  onPathHelpOsChange: (value: 'windows' | 'macos' | 'linux' | 'unknown') => void;
+  onAskPathHelp: () => void;
+  onToggleImportFailures: () => void;
 }) {
   const selectedSkill = skills.find(skill => skill.id === selectedSkillId) ?? null;
   const isFirstScanEmpty = !searchQuery && skills.length === 0;
@@ -324,21 +567,30 @@ function SkillLibraryPage({
             当你准备开工时，不用再回忆装过什么技能，直接在这里找到最合适的能力。
           </p>
 
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <button
-              onClick={onLocalizeAll}
-              disabled={localizingAll}
-              className="rounded-xl border border-primary/30 bg-primary/10 px-4 py-2 text-[13px] font-medium text-primary transition-colors hover:bg-primary/16 disabled:opacity-50"
-            >
-              {localizingAll ? '正在扫描并更新中文展示...' : '扫描新技能并更新中文展示'}
-            </button>
-            <span className="text-[12px] text-on-surface-muted">只写入 metadata.json，不修改原始 SKILL.md。</span>
-          </div>
-
           {localizeFeedback && (
             <div className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-success/30 bg-success/10 px-3 py-1.5 text-[12px] text-success">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>{localizeFeedback}</span>
+            </div>
+          )}
+
+          {importFailures.length > 0 && (
+            <div className="mt-3 rounded-lg border border-warning/30 bg-warning/10 p-3 text-[12px] text-warning">
+              <div className="flex items-center justify-between gap-3">
+                <span>有 {importFailures.length} 个文件导入失败</span>
+                <button onClick={onToggleImportFailures} className="underline underline-offset-2 hover:opacity-80">
+                  {showImportFailures ? '收起明细' : '查看明细'}
+                </button>
+              </div>
+              {showImportFailures && (
+                <div className="mt-2 max-h-[180px] overflow-auto space-y-1 rounded-md bg-surface-card/70 p-2">
+                  {importFailures.map(item => (
+                    <div key={item} className="font-mono text-[11px] text-on-surface-muted break-all">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -354,34 +606,130 @@ function SkillLibraryPage({
               <div className="grid gap-3 sm:grid-cols-3">
                 {sourceScanSummary.sources.map(source => {
                   const style = getSourceStatusStyle(source.status);
+                  const sourceKey = source.source as ImportSource;
+                  const isImportingThisSource = importingSource === sourceKey;
+                  const importUi = importStateBySource[sourceKey];
+                  const importLabel =
+                    importUi.state === 'success'
+                      ? `已导入 ${importUi.importedCount} 条`
+                      : importUi.state === 'failed'
+                        ? '导入失败，请重试'
+                        : '未选择目录';
+                  const importLabelClass =
+                    importUi.state === 'success'
+                      ? 'text-success'
+                      : importUi.state === 'failed'
+                        ? 'text-error'
+                        : 'text-on-surface-muted';
                   return (
                     <div key={source.source} className="rounded-xl border border-outline-subtle bg-surface-bright/70 p-3">
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <span className="text-[13px] font-medium text-on-surface">{source.label}</span>
-                        <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium ${style.chip}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
-                          {style.label}
-                        </span>
+                        <span className={`text-[11px] ${importLabelClass}`}>{importLabel}</span>
                       </div>
                       <div className="text-[20px] font-mono font-semibold text-on-surface">{source.skillCount}</div>
                       <div className="text-[11px] text-on-surface-muted mb-2">已识别技能数</div>
                       <div className="space-y-1">
                         {source.paths.map(scanPath => (
                           <div key={scanPath} className="rounded-md bg-surface-card border border-outline-subtle px-2 py-1 text-[10px] text-on-surface-muted font-mono break-all">
-                            {scanPath}
+                            {maskPathForDisplay(scanPath)}
                           </div>
                         ))}
                       </div>
-                      <div className="mt-2 text-[10px] text-on-surface-muted inline-flex items-center gap-1">
-                        {source.status === 'unreachable' ? <AlertCircle className="w-3 h-3 text-error" /> : <CheckCircle2 className="w-3 h-3 text-success/80" />}
-                        <span>{source.message}</span>
+                      <div className="mt-3 flex items-center gap-2">
+                        <button
+                          onClick={() => onImportLocalDirectory(sourceKey)}
+                          disabled={isImportingThisSource}
+                          className="rounded-lg border border-info/35 bg-info/12 px-3 py-1.5 text-[12px] font-medium text-info transition-colors hover:bg-info/18 disabled:opacity-50"
+                        >
+                          {isImportingThisSource ? '导入中...' : `选择${source.label}目录导入`}
+                        </button>
+                        <span className="text-[11px] text-on-surface-muted">导入后自动更新中文展示</span>
                       </div>
+
+                      <details className="mt-2 text-[11px] text-on-surface-muted">
+                        <summary className="cursor-pointer select-none">找不到目录？查看{source.label}定位步骤</summary>
+                        <div className="mt-2 space-y-1">
+                          {source.paths.map(scanPath => (
+                            <div key={`guide-${scanPath}`} className="rounded-md bg-surface-card border border-outline-subtle px-2 py-1 font-mono break-all">
+                              {maskPathForDisplay(scanPath)}
+                            </div>
+                          ))}
+                          <p>Windows：文件选择器点“查看”→ 勾选“隐藏的项目”后再进入以上目录。</p>
+                        </div>
+                      </details>
                     </div>
                   );
                 })}
               </div>
             </div>
           )}
+
+          <div className="mt-5 rounded-xl border border-accent/25 bg-accent/5 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Bot className="w-4 h-4 text-accent" />
+              <p className="text-[13px] font-medium text-on-surface">找不到路径？问 AI</p>
+            </div>
+            <p className="text-[12px] text-on-surface-muted mb-3">直接描述你的情况，例如“我是 Windows，Cursor 找不到 skills 目录”。</p>
+
+            <div className="grid gap-2 sm:grid-cols-3 mb-2">
+              <select
+                value={pathHelpSource}
+                onChange={event => onPathHelpSourceChange(event.target.value as ImportSource | 'unknown')}
+                className="h-9 rounded-lg border border-outline-variant bg-surface-card px-3 text-[12px] text-on-surface"
+              >
+                <option value="unknown">工具（可选）</option>
+                <option value="codex">Codex</option>
+                <option value="cursor">Cursor</option>
+                <option value="claude">Claude</option>
+              </select>
+              <select
+                value={pathHelpOs}
+                onChange={event => onPathHelpOsChange(event.target.value as 'windows' | 'macos' | 'linux' | 'unknown')}
+                className="h-9 rounded-lg border border-outline-variant bg-surface-card px-3 text-[12px] text-on-surface"
+              >
+                <option value="unknown">系统（可选）</option>
+                <option value="windows">Windows</option>
+                <option value="macos">macOS</option>
+                <option value="linux">Linux</option>
+              </select>
+              <button
+                onClick={onAskPathHelp}
+                disabled={pathHelpLoading || !pathHelpQuery.trim()}
+                className="h-9 rounded-lg border border-accent/35 bg-accent/12 px-3 text-[12px] font-medium text-accent disabled:opacity-50"
+              >
+                {pathHelpLoading ? 'AI 分析中...' : '获取定位建议'}
+              </button>
+            </div>
+
+            <textarea
+              value={pathHelpQuery}
+              onChange={event => onPathHelpQueryChange(event.target.value)}
+              placeholder="描述你遇到的问题（例如：我在 Windows 上找不到 Codex 的 skills 文件夹）"
+              rows={2}
+              className="w-full rounded-lg border border-outline-variant bg-surface-card px-3 py-2 text-[12px] text-on-surface placeholder:text-on-surface-muted"
+            />
+
+            {pathHelpResult && (
+              <div className="mt-3 rounded-lg border border-outline-subtle bg-surface-card/80 p-3 space-y-2">
+                <p className="text-[12px] text-on-surface">{pathHelpResult.summary}</p>
+                <div className="text-[12px] text-on-surface-muted">
+                  <p className="mb-1">下一步：</p>
+                  {pathHelpResult.nextActions.map(action => (
+                    <p key={action}>- {action}</p>
+                  ))}
+                </div>
+                <div className="text-[12px] text-on-surface-muted">
+                  <p className="mb-1">可能路径：</p>
+                  {pathHelpResult.likelyPaths.map(item => (
+                    <p key={item} className="font-mono text-[11px] break-all">
+                      {maskPathForDisplay(item)}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
           {statsData && (
             <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -450,7 +798,7 @@ function SkillLibraryPage({
                 <FolderSearch className="w-4 h-4 text-primary" />
                 <p className="font-medium">还没有识别到本地技能</p>
               </div>
-              <p className="text-on-surface-muted text-sm mb-4">我们会自动扫描常见目录。你可以先把技能文件放在下列任一位置，再点“扫描新技能并更新中文展示”。</p>
+              <p className="text-on-surface-muted text-sm mb-4">请先在“扫描来源状态”的对应来源卡片内点击“选择目录导入”，授权后系统会读取你选择目录中的 SKILL.md。</p>
               <div className="grid gap-3 md:grid-cols-3">
                 {SKILL_ROOT_GUIDES.map(guide => (
                   <div key={guide.id} className="rounded-xl border border-outline-subtle bg-surface-bright/70 p-3">

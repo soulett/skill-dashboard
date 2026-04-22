@@ -43,6 +43,17 @@ export const api = USE_MOCK
           } satisfies SourceScanSummary,
         }),
       triggerScan: mockApi.triggerScan,
+      importSkills: async () =>
+        ({
+          success: true,
+          data: {
+            success: true,
+            importedCount: 0,
+            totalImportedStored: 0,
+            totalSkills: 0,
+            scannedAt: new Date().toISOString(),
+          },
+        }),
       updateSkillMetadata: async (id: string, payload: SkillMetadataPatch) =>
         mockApi.updateSkill(id, {
           ...(payload.displayTitle !== undefined ? { title: payload.displayTitle } : {}),
