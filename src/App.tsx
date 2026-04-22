@@ -62,6 +62,7 @@ interface LocalImportScanResult {
 }
 
 type ImportUiState = 'idle' | 'success' | 'failed';
+const MAX_IMPORTED_RAW_CONTENT = 20_000;
 
 function maskPathForDisplay(input: string): string {
   const normalized = input.replaceAll('/', '\\');
@@ -143,6 +144,7 @@ async function scanLocalSkillsFromDirectory(directoryHandle: any, source: Import
       try {
         const file = await entry.getFile();
         const raw = await file.text();
+        const rawForUpload = raw.length > MAX_IMPORTED_RAW_CONTENT ? raw.slice(0, MAX_IMPORTED_RAW_CONTENT) : raw;
         const frontmatter = parseFrontmatter(raw);
         const title =
           frontmatter.title ??
@@ -174,7 +176,7 @@ async function scanLocalSkillsFromDirectory(directoryHandle: any, source: Import
             whatItDoes: description,
             whenToUse: [],
             triggerWords: tags,
-            rawContent: raw,
+            rawContent: rawForUpload,
           },
         });
       } catch (error) {
@@ -308,7 +310,9 @@ export default function App() {
 
       const importResult = await api.importSkills(scanned.skills);
       if (!importResult.success) {
-        setLocalizeFeedback('本地导入失败，请稍后重试。');
+        const importError =
+          'error' in importResult && typeof importResult.error === 'string' ? importResult.error : undefined;
+        setLocalizeFeedback(importError ?? '本地导入失败，请稍后重试。');
         setImportStateBySource(previous => ({
           ...previous,
           [source]: { state: 'failed', importedCount: 0 },
@@ -323,7 +327,9 @@ export default function App() {
         const failureCount = scanned.errors.length;
         setLocalizeFeedback(`导入 ${scanned.skills.length} 条，中文更新 ${updatedCount} 条，跳过 ${skippedCount} 条，失败 ${failureCount} 条。`);
       } else {
-        setLocalizeFeedback(`导入 ${scanned.skills.length} 条成功，但中文展示更新失败。`);
+        const localizeError =
+          'error' in localizeResult && typeof localizeResult.error === 'string' ? localizeResult.error : undefined;
+        setLocalizeFeedback(`导入 ${scanned.skills.length} 条成功，但中文展示更新失败：${localizeError ?? '未知错误'}`);
       }
 
       setImportStateBySource(previous => ({

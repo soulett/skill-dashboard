@@ -95,7 +95,7 @@ export async function getRawSkills(context: ScanContext): Promise<Skill[]> {
 export async function getMergedSkills(context: ScanContext): Promise<Skill[]> {
   const [metadata, parsed] = await Promise.all([
     ensureMetadataFile(context.metadataFilePath),
-    scanWithFallback(context),
+    getRawSkills(context),
   ]);
 
   return parsed.map(skill => mergeSkill(skill, metadata.skills[skill.id]));
