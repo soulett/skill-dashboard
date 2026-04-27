@@ -287,7 +287,8 @@ export async function suggestFieldFixesWithAI(input: SuggestFieldFixesInput): Pr
           content:
             '你是“技能资料优化助手”。你的输出必须是 JSON 数组，不能有任何额外文字。' +
             '每个元素结构为 {field, suggestion, explanation, detailedExplanation}。' +
-            '写作风格必须面向非技术用户：用口语化中文，避免术语堆叠，句子短、直接、好懂。',
+            '写作风格必须面向非技术用户：用口语化中文，避免术语堆叠，句子短、直接、好懂。' +
+            'explanation 要写成“给用户看的一句话原因”，让用户读完就知道为什么要改。',
         },
         {
           role: 'user',
@@ -300,7 +301,8 @@ export async function suggestFieldFixesWithAI(input: SuggestFieldFixesInput): Pr
             '4) description/whatItDoes 用一句话说清“它帮我省什么事”。\n' +
             '5) explanation 每条不超过 30 个字。\n' +
             '6) detailedExplanation 每条 80-180 字，必须包含：这个字段是什么 + 为什么这样写更好。\n' +
-            '7) 输出必须是可被 JSON.parse 的纯 JSON 数组。',
+            '7) detailedExplanation 禁止空话，必须给可执行改法示例。\n' +
+            '8) 输出必须是可被 JSON.parse 的纯 JSON 数组。',
         },
       ],
     }),

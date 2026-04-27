@@ -1,18 +1,20 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { AlertTriangle, ArrowRight, CheckCircle2, ChevronDown, ChevronRight, Copy, Sparkles, XCircle } from 'lucide-react';
+import { api } from '../../api';
 import { AIFieldSuggestion, suggestFieldFixes } from '../../api/ai';
-import { HealthGrade, Skill, SkillHealthReport } from '../../types';
+import { HealthGrade, Skill, SkillHealthReport, SkillMetadataPatch } from '../../types';
 import { calcCompletenessScore, GRADE_CONFIG, getMostCommonIssue } from '../../utils';
 
 interface HealthCheckProps {
   skills: Skill[];
   onNavigateToSkill: (skillId: string, editMode: boolean) => void;
+  onSkillPatched: (updatedSkill: Skill) => void;
 }
 
 type GradeFilter = HealthGrade | 'all';
 
-export default function HealthCheck({ skills, onNavigateToSkill }: HealthCheckProps) {
+export default function HealthCheck({ skills, onNavigateToSkill, onSkillPatched }: HealthCheckProps) {
   const [gradeFilter, setGradeFilter] = useState<GradeFilter>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [sort, setSort] = useState<'asc' | 'desc'>('asc');
@@ -129,6 +131,7 @@ export default function HealthCheck({ skills, onNavigateToSkill }: HealthCheckPr
               expanded={expandedId === report.skillId}
               onToggle={() => setExpandedId(previous => (previous === report.skillId ? null : report.skillId))}
               onFix={() => onNavigateToSkill(report.skillId, true)}
+              onSkillPatched={onSkillPatched}
             />
           ))}
         </AnimatePresence>
@@ -169,6 +172,7 @@ function SkillHealthRow({
   expanded,
   onToggle,
   onFix,
+  onSkillPatched,
 }: {
   report: SkillHealthReport;
   skill: Skill;
@@ -176,11 +180,14 @@ function SkillHealthRow({
   expanded: boolean;
   onToggle: () => void;
   onFix: () => void;
+  onSkillPatched: (updatedSkill: Skill) => void;
 }) {
   const cfg = GRADE_CONFIG[report.grade];
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<AIFieldSuggestion[]>([]);
   const [copied, setCopied] = useState<string | null>(null);
+  const [applying, setApplying] = useState(false);
+  const [applyMessage, setApplyMessage] = useState<string | null>(null);
 
   const failedFields = report.checks.filter(check => !check.passed).map(check => check.field);
 
@@ -202,6 +209,56 @@ function SkillHealthRow({
       setCopied(key);
       setTimeout(() => setCopied(null), 1500);
     });
+  };
+
+  const toList = (value: string | string[]): string[] =>
+    (Array.isArray(value) ? value : value.split(/\r?\n|[;,，；、/]|(?:\d+\s*[.)、])/g))
+      .map(item => item.trim())
+      .filter(Boolean);
+
+  const toPatch = (suggestion: AIFieldSuggestion): SkillMetadataPatch | null => {
+    if (suggestion.field === 'description' || suggestion.field === 'whatItDoes') {
+      const text = Array.isArray(suggestion.suggestion) ? suggestion.suggestion.join('；') : suggestion.suggestion;
+      return { description: text.trim() };
+    }
+    if (suggestion.field === 'tags') {
+      return { tags: toList(suggestion.suggestion).slice(0, 8) };
+    }
+    if (suggestion.field === 'whenToUse') {
+      return { whenToUse: toList(suggestion.suggestion).slice(0, 6) };
+    }
+    return null;
+  };
+
+  const applySuggestions = async (targets: AIFieldSuggestion[]) => {
+    if (applying || targets.length === 0) return;
+    const patches = targets.map(toPatch).filter((item): item is SkillMetadataPatch => item !== null);
+    if (patches.length === 0) {
+      setApplyMessage('当前建议不支持自动应用，请点击“去完善”手动确认。');
+      return;
+    }
+
+    const mergedPatch = patches.reduce<SkillMetadataPatch>(
+      (acc, patch) => ({
+        ...acc,
+        ...(patch.description !== undefined ? { description: patch.description } : {}),
+        ...(patch.tags !== undefined ? { tags: patch.tags } : {}),
+        ...(patch.whenToUse !== undefined ? { whenToUse: patch.whenToUse } : {}),
+      }),
+      {},
+    );
+
+    setApplying(true);
+    setApplyMessage(null);
+    const response = await api.updateSkillMetadata(skill.id, mergedPatch);
+    setApplying(false);
+
+    if (response.success) {
+      onSkillPatched(response.data);
+      setApplyMessage('已应用建议并保存。');
+    } else {
+      setApplyMessage(`应用失败：${response.error ?? '未知错误'}`);
+    }
   };
 
   return (
@@ -307,11 +364,22 @@ function SkillHealthRow({
 
                   {aiSuggestions.length > 0 ? (
                     <div className="space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-[11px] text-on-surface-muted">建议已生成，可直接一键应用可自动处理的字段。</p>
+                        <button
+                          onClick={() => applySuggestions(aiSuggestions)}
+                          disabled={applying}
+                          className="h-7 px-2.5 rounded-md text-[11px] font-medium border border-success/35 bg-success/10 text-success hover:bg-success/15 disabled:opacity-50"
+                        >
+                          {applying ? '应用中...' : '一键应用全部'}
+                        </button>
+                      </div>
                       {aiSuggestions.map(suggestion => {
                         const text = Array.isArray(suggestion.suggestion) ? suggestion.suggestion.join(' / ') : suggestion.suggestion;
                         const { label, whatIs } = getFieldMeta(suggestion.field);
                         const detailed = suggestion.detailedExplanation?.trim() || buildFallbackDetailedExplanation(suggestion.field);
                         const key = `${skill.id}-${suggestion.field}`;
+                        const canAutoApply = toPatch(suggestion) !== null;
 
                         return (
                           <div key={suggestion.field} className="flex items-start justify-between gap-2 p-2 rounded-lg bg-accent/5 border border-accent/15 text-[11px]">
@@ -333,13 +401,27 @@ function SkillHealthRow({
                                 <span className="text-on-surface-muted">详细说明：</span>
                                 {detailed}
                               </div>
+                              {!canAutoApply && <div className="text-[10px] text-warning">该字段暂不支持自动应用，请手动确认后再保存。</div>}
                             </div>
-                            <button onClick={() => copyText(text, key)} className="shrink-0 text-on-surface-muted hover:text-on-surface transition-colors mt-0.5" title="复制">
-                              {copied === key ? <CheckCircle2 className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
-                            </button>
+                            <div className="shrink-0 flex items-center gap-1 mt-0.5">
+                              {canAutoApply && (
+                                <button
+                                  onClick={() => applySuggestions([suggestion])}
+                                  disabled={applying}
+                                  className="h-6 px-2 rounded text-[10px] border border-success/30 text-success hover:bg-success/10 disabled:opacity-50"
+                                  title="应用该条建议"
+                                >
+                                  应用
+                                </button>
+                              )}
+                              <button onClick={() => copyText(text, key)} className="text-on-surface-muted hover:text-on-surface transition-colors" title="复制">
+                                {copied === key ? <CheckCircle2 className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
+                              </button>
+                            </div>
                           </div>
                         );
                       })}
+                      {applyMessage && <p className="text-[11px] text-on-surface-muted">{applyMessage}</p>}
                     </div>
                   ) : (
                     !aiLoading && <p className="text-[11px] text-on-surface-muted">点击“生成建议”，快速补齐演示版缺失字段。</p>

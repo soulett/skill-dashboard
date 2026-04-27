@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Dashboard - 中文产品作品集</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: rgba(0, 0, 0, 0.95);
+      --navy-soft: #55697f;
+      --coral: #6b8198;
+      --coral-soft: #8ea2b7;
+      --cream: #ffffff;
+      --paper: #ffffff;
+      --line: rgba(55, 53, 47, 0.09);
+      --text: rgba(0, 0, 0, 0.92);
+      --text-soft: #615d59;
+      --blue: #6b8198;
+      --green: #1aae39;
+      --purple: #391c57;
+      --orange: #dd5b00;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      --shadow-strong: 0 18px 44px rgba(15, 23, 42, 0.1);
+      --radius: 20px;
+      --max: 1160px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "DM Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(107, 129, 152, 0.05), transparent 28%),
+        radial-gradient(circle at 82% 14%, rgba(142, 162, 183, 0.05), transparent 24%),
+        linear-gradient(180deg, #ffffff 0%, #f8f7f5 42%, #f6f5f4 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    h1, h2, h3, h4 {
+      margin: 0;
+      font-family: "DM Serif Display", "Songti SC", serif;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+
+    p { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.88);
+      border-bottom: 1px solid rgba(55, 53, 47, 0.08);
+    }
+
+    .nav-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .nav-logo {
+      font-size: 1.2rem;
+      color: var(--navy);
+    }
+
+    .nav-logo span { color: var(--coral); }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 22px;
+      margin: 0;
+      padding: 0;
+      color: var(--text-soft);
+      font-size: 0.92rem;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--coral);
+      transition: width 0.25s ease;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after { width: 100%; }
+
+    section { padding: 88px 24px; }
+
+    .container {
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+
+    .label {
+      margin-bottom: 12px;
+      color: var(--coral);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 2.9rem);
+      color: var(--navy);
+      line-height: 1.18;
+    }
+
+    .section-subtitle {
+      margin-top: 16px;
+      max-width: 760px;
+      color: var(--text-soft);
+      font-size: 1.02rem;
+    }
+
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 84% 18%, rgba(107, 129, 152, 0.08), transparent 0 22%),
+        radial-gradient(circle at 18% 78%, rgba(142, 162, 183, 0.05), transparent 0 24%),
+        linear-gradient(180deg, #ffffff 0%, #faf9f7 55%, #f6f5f4 100%);
+      color: var(--text);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(107,129,152,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(107,129,152,0.03) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at center, black 28%, transparent 92%);
+      opacity: 0.28;
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(107, 129, 152, 0.03) 0%, rgba(107, 129, 152, 0) 28%),
+        linear-gradient(0deg, rgba(246, 245, 244, 0.8) 0%, rgba(246, 245, 244, 0) 34%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(242, 249, 255, 0.9);
+      border: 1px solid rgba(107, 129, 152, 0.12);
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .hero-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6b8198, #8ea2b7);
+      box-shadow: 0 0 14px rgba(142, 162, 183, 0.16);
+    }
+
+    .hero h1 {
+      margin-top: 24px;
+      font-size: clamp(3rem, 6vw, 5.1rem);
+      line-height: 0.98;
+    }
+
+    .hero h1 span {
+      color: var(--navy-soft);
+    }
+
+    .hero-tagline {
+      margin-top: 24px;
+      max-width: 640px;
+      font-size: 1.25rem;
+      color: var(--navy);
+    }
+
+    .hero-desc {
+      margin-top: 18px;
+      max-width: 640px;
+      color: var(--text-soft);
+      font-size: 1.02rem;
+    }
+
+    .hero-loop {
+      margin-top: 24px;
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(246, 245, 244, 0.92);
+      color: var(--navy);
+      border: 1px solid rgba(55, 53, 47, 0.08);
+      font-size: 0.95rem;
+    }
+
+    .hero-workbench {
+      padding: 22px;
+      border-radius: 26px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,245,244,0.96));
+      border: 1px solid rgba(55, 53, 47, 0.08);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.8),
+        0 18px 34px rgba(15, 23, 42, 0.05);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-workbench-label {
+      color: #a39e98;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .hero-search {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(250, 250, 252, 0.96);
+      border: 1px solid rgba(55, 53, 47, 0.08);
+      color: var(--navy);
+      font-size: 0.95rem;
+    }
+
+    .hero-search-icon {
+      color: #a39e98;
+      font-size: 1rem;
+    }
+
+    .hero-search-text {
+      color: #a39e98;
+    }
+
+    .hero-asset-list {
+      margin-top: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-asset-item {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(55, 53, 47, 0.08);
+    }
+
+    .hero-asset-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .hero-asset-name {
+      color: var(--navy);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .hero-asset-tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f1f5f8;
+      color: #55697f;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .hero-asset-meta {
+      margin-top: 6px;
+      color: var(--text-soft);
+      font-size: 0.84rem;
+    }
+
+    .hero-mini-flow {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .hero-mini-chip {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(246, 245, 244, 0.9);
+      color: var(--text-soft);
+      border: 1px solid rgba(55, 53, 47, 0.08);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .surface {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: 28px;
+    }
+
+    .cards-grid {
+      margin-top: 36px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .cards-grid.col-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .cards-grid.col-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .cards-grid.col-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 26px;
+      background: rgba(255,255,255,0.94);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 18px;
+    }
+
+    .icon.red { background: rgba(107, 129, 152, 0.1); color: #6b8198; }
+    .icon.blue { background: rgba(85, 105, 127, 0.08); color: #55697f; }
+    .icon.green { background: rgba(26, 174, 57, 0.1); color: #1aae39; }
+    .icon.purple { background: rgba(57, 28, 87, 0.08); color: #391c57; }
+    .icon.orange { background: rgba(221, 91, 0, 0.1); color: #dd5b00; }
+
+    .card h3 {
+      font-size: 1.24rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+    }
+
+    .persona-tag,
+    .feature-tag {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .persona-tag.primary,
+    .feature-tag.core { background: #f1f5f8; color: #55697f; }
+    .persona-tag.secondary,
+    .feature-tag.structure { background: rgba(107, 129, 152, 0.08); color: #6b8198; }
+    .persona-tag.tertiary,
+    .feature-tag.safe { background: rgba(26, 174, 57, 0.1); color: #1aae39; }
+    .feature-tag.localize { background: rgba(57, 28, 87, 0.08); color: #391c57; }
+    .feature-tag.analysis { background: rgba(221, 91, 0, 0.1); color: #dd5b00; }
+
+    .persona-goals,
+    .decision-list {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--text-soft);
+      font-size: 0.92rem;
+    }
+
+    .journey-flow {
+      margin-top: 36px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .journey-step {
+      position: relative;
+      padding: 26px 20px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .journey-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -14px;
+      top: 40%;
+      color: var(--coral);
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .journey-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #6b8198, #8ea2b7);
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .journey-step h3 {
+      font-size: 1.08rem;
+      margin-bottom: 8px;
+      color: var(--navy);
+    }
+
+    .journey-step p {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    .journey-pain {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(230, 90, 90, 0.3);
+      color: #6b8198;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .story-card {
+      padding: 20px 22px;
+      border-left: 4px solid var(--coral);
+      background: rgba(255,255,255,0.94);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      border-top: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .story-card + .story-card { margin-top: 14px; }
+
+    .story-as {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #6b8198;
+      text-transform: uppercase;
+    }
+
+    .story-want {
+      margin-top: 8px;
+      font-size: 1rem;
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .story-so {
+      margin-top: 6px;
+      color: var(--text-soft);
+      font-size: 0.92rem;
+    }
+
+    .decision-grid {
+      margin-top: 36px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .decision-card {
+      padding: 24px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .decision-card h3 {
+      font-size: 1.15rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .decision-card p {
+      color: var(--text-soft);
+      font-size: 0.94rem;
+    }
+
+    .arch-diagram {
+      margin-top: 36px;
+      padding: 36px 28px;
+      border-radius: 28px;
+      background: rgba(246,245,244,0.96);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .arch-label {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .arch-label.orange { color: var(--orange); }
+    .arch-label.purple { color: var(--purple); }
+    .arch-label.green { color: var(--green); }
+    .arch-label.blue { color: var(--blue); }
+    .arch-label.navy { color: var(--navy); }
+
+    .arch-layer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .arch-box {
+      min-width: 156px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 2px solid;
+      background: rgba(255,255,255,0.96);
+      text-align: center;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .arch-box small {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      opacity: 0.78;
+    }
+
+    .arch-box.orange { border-color: rgba(221, 91, 0, 0.24); color: #dd5b00; background: rgba(221, 91, 0, 0.06); }
+    .arch-box.purple { border-color: rgba(57, 28, 87, 0.16); color: #391c57; background: rgba(57, 28, 87, 0.05); }
+    .arch-box.green { border-color: rgba(26, 174, 57, 0.18); color: #1aae39; background: rgba(26, 174, 57, 0.05); }
+    .arch-box.blue { border-color: rgba(107, 129, 152, 0.18); color: #6b8198; background: rgba(107, 129, 152, 0.05); }
+    .arch-box.navy { border-color: rgba(85, 105, 127, 0.14); color: #55697f; background: rgba(85, 105, 127, 0.04); }
+
+    .arch-arrow {
+      margin: 8px 0 18px;
+      text-align: center;
+      color: var(--text-soft);
+      font-size: 1.1rem;
+    }
+
+    .arch-arrow span {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.74rem;
+      font-weight: 600;
+    }
+
+    .tech-badges {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tech-badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid var(--line);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .insights-grid {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .insight-card {
+      padding: 22px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.94);
+      border-left: 4px solid #6b8198;
+      border-top: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .insight-card h3 {
+      font-size: 1.08rem;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .insight-card p {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+    }
+
+    footer {
+      padding: 36px 24px 54px;
+      text-align: center;
+      color: var(--text-soft);
+      font-size: 0.88rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1040px) {
+      .hero-grid,
+      .cards-grid.col-4,
+      .cards-grid.col-3,
+      .decision-grid,
+      .insights-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .journey-flow {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-step:not(:last-child)::after {
+        content: "↓";
+        left: 50%;
+        right: auto;
+        top: auto;
+        bottom: -18px;
+        transform: translateX(-50%);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .nav-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-top: 16px;
+        padding-bottom: 16px;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        gap: 12px 18px;
+      }
+
+      .hero-grid,
+      .cards-grid.col-4,
+      .cards-grid.col-3,
+      .cards-grid.col-2,
+      .decision-grid,
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-workbench {
+        margin-top: 8px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 72px;
+        padding-bottom: 72px;
+      }
+
+      section { padding: 72px 18px; }
+      .arch-diagram { padding: 28px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">Skill <span>Dashboard</span></a>
+      <ul class="nav-links">
+        <li><a href="#problem">问题</a></li>
+        <li><a href="#personas">用户</a></li>
+        <li><a href="#journey">闭环</a></li>
+        <li><a href="#stories">故事</a></li>
+        <li><a href="#features">功能</a></li>
+        <li><a href="#decisions">决策</a></li>
+        <li><a href="#architecture">架构</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero" id="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="hero-badge">PM Portfolio / Alpha Real Loop</div>
+        <h1>Skill <span>Dashboard</span></h1>
+        <p class="hero-tagline">把分散的 AI skills，放在一个工作台上，并且可以随时检索。</p>
+        <p class="hero-desc">第一阶段先解决“看得见、找得到”的问题：把本地已有能力集中展示，再进入后续的理解、整理与治理。</p>
+        <div class="hero-loop">集中看见 → 统一展示 → 随时检索</div>
+      </div>
+      <div class="hero-workbench">
+        <div class="hero-workbench-label">Workspace Preview</div>
+        <div class="hero-search">
+          <span class="hero-search-icon">⌕</span>
+          <span class="hero-search-text">搜索 skill 名称、用途或适用场景</span>
+        </div>
+        <div class="hero-asset-list">
+          <div class="hero-asset-item">
+            <div class="hero-asset-top">
+              <div class="hero-asset-name">pm-portfolio-generator</div>
+              <span class="hero-asset-tag">skill</span>
+            </div>
+            <div class="hero-asset-meta">产品作品集生成 · 已集中到工作台</div>
+          </div>
+          <div class="hero-asset-item">
+            <div class="hero-asset-top">
+              <div class="hero-asset-name">frontend-design</div>
+              <span class="hero-asset-tag">skill</span>
+            </div>
+            <div class="hero-asset-meta">前端视觉表达 · 可按任务快速检索</div>
+          </div>
+          <div class="hero-asset-item">
+            <div class="hero-asset-top">
+              <div class="hero-asset-name">openai-docs</div>
+              <span class="hero-asset-tag">system</span>
+            </div>
+            <div class="hero-asset-meta">官方文档查询 · 统一展示与检索入口</div>
+          </div>
+        </div>
+        <div class="hero-mini-flow">
+          <span class="hero-mini-chip">集中</span>
+          <span class="hero-mini-chip">展示</span>
+          <span class="hero-mini-chip">检索</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="problem">
+    <div class="container">
+      <div class="label reveal">Problem Statement</div>
+      <h2 class="section-title reveal">用户的 AI 能力已经存在，但仍然不可调用</h2>
+      <p class="section-subtitle reveal">项目的起点不是做一个“更好看的技能列表”，而是回应一个真实的认知断层：用户装了很多能力，却依然不知道自己拥有什么、该从哪里开始、哪些资产值得整理。</p>
+      <div class="cards-grid col-4">
+        <div class="card reveal">
+          <div class="icon red">!</div>
+          <h3>装了很多，但说不清</h3>
+          <p>目标用户已经在 Cursor、Claude、ChatGPT 等环境里安装了大量 skills 与 prompts，但缺乏一眼可见的总览。</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon blue">#</div>
+          <h3>文件名不是能力模型</h3>
+          <p>文件路径、目录名和 Markdown 原文不能直接回答“它能做什么、什么时候该用、值不值得保留”。</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon purple">?</div>
+          <h3>知道有资产，不知道怎么选</h3>
+          <p>当数量超过 10 个之后，用户开始依赖模糊记忆，反复翻找文件，甚至重复造轮子。</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon orange">~</div>
+          <h3>现有工具只存，不解释</h3>
+          <p>Prompt Manager 更像仓库，文件浏览器更像目录树，而 Skill Dashboard 试图先把资产翻译成可理解的能力卡片。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="personas">
+    <div class="container">
+      <div class="label reveal">Target Users</div>
+      <h2 class="section-title reveal">为“有资产但没地图”的用户设计</h2>
+      <p class="section-subtitle reveal">PRD 明确把核心人群定义为非技术背景的 vibe coding 爱好者。他们的问题不是不会安装工具，而是不会管理、检索和复用已经拥有的 AI 资产。</p>
+      <div class="cards-grid col-3">
+        <div class="card reveal">
+          <span class="persona-tag primary">Primary</span>
+          <h3>Vibe Coding 爱好者</h3>
+          <p>用过 Cursor / Claude / ChatGPT，跟着教程安装过一批 skills、prompts 和 SOP，但已经开始出现“装完以后找不到”的疲劳感。</p>
+          <ul class="persona-goals">
+            <li>快速看见自己当前拥有哪些能力</li>
+            <li>按任务而不是按文件名找到合适资产</li>
+            <li>把常用资产留住，把混乱资产理顺</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <span class="persona-tag secondary">Context</span>
+          <h3>项目创作者本人</h3>
+          <p>既是构建者也是使用者，因此第一版无需权限体系、多用户协作或云同步，重点转向个人资产治理的真实闭环。</p>
+          <ul class="persona-goals">
+            <li>验证产品是否能在本地独立跑通</li>
+            <li>在不破坏原文件的前提下补充展示层</li>
+            <li>为后续跨平台扩展打统一模型基础</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <span class="persona-tag tertiary">Insight</span>
+          <h3>产品洞察</h3>
+          <p>大多数 AI 工具都在帮助用户“获得新能力”，而这个产品选择反过来，帮助用户“盘活已拥有的能力”。</p>
+          <ul class="persona-goals">
+            <li>让资产从“存在”变成“可调用”</li>
+            <li>让整理动作有明确入口和反馈</li>
+            <li>先做认知基础，再谈执行与编排</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="journey">
+    <div class="container">
+      <div class="label reveal">Phase One</div>
+      <h2 class="section-title reveal">第一阶段先完成“集中展示 + 可检索”的基础闭环</h2>
+      <p class="section-subtitle reveal">这一阶段不追求一步到位的治理系统，而是先把分散在本地的 AI skills 集中到一个工作台里，让用户能够稳定看见并快速检索。</p>
+      <div class="journey-flow">
+        <div class="journey-step reveal">
+          <div class="journey-num">1</div>
+          <h3>扫描本地目录</h3>
+          <p>从 Codex skills 目录开始，逐步扩展到多平台 AI 资产白名单。</p>
+          <div class="journey-pain">从“我记得装过”变成“系统真实发现”</div>
+        </div>
+        <div class="journey-step reveal">
+          <div class="journey-num">2</div>
+          <h3>统一解析模型</h3>
+          <p>把 skill、rule、prompt 等差异化命名统一抽象成 `AIAsset`。</p>
+          <div class="journey-pain">解决“各平台名字不同，无法统一看”的结构问题</div>
+        </div>
+        <div class="journey-step reveal">
+          <div class="journey-num">3</div>
+          <h3>展示真实数据</h3>
+          <p>前端不再依赖纯 mock，而是展示解析后的真实技能卡片与状态。</p>
+          <div class="journey-pain">让页面从概念展示走向可信产品</div>
+        </div>
+        <div class="journey-step reveal">
+          <div class="journey-num">4</div>
+          <h3>健康检查发现缺口</h3>
+          <p>识别缺少描述、来源不明、结构不完整等问题，把“看见”连接到“该整理什么”。</p>
+          <div class="journey-pain">让总览页不只是列表，而是治理入口</div>
+        </div>
+        <div class="journey-step reveal">
+          <div class="journey-num">5</div>
+          <h3>sidecar metadata 持久化</h3>
+          <p>补充信息只写入 `metadata.json` 或 sidecar 记录，不改原始 `SKILL.md`。</p>
+          <div class="journey-pain">兼顾安全边界、可编辑性与刷新后保留</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stories">
+    <div class="container">
+      <div class="label reveal">User Stories</div>
+      <h2 class="section-title reveal">产品如何把“认知断层”拆成具体需求</h2>
+      <p class="section-subtitle reveal">这些用户故事不是装饰性文案，而是从 PRD 和 Alpha 真实链路里反推出来的关键动作，帮助页面把抽象愿景落到用户任务上。</p>
+      <div class="reveal">
+        <div class="story-card">
+          <div class="story-as">作为已经安装了很多 AI 资产的用户</div>
+          <div class="story-want">我希望快速看清本地已经有哪些能力</div>
+          <div class="story-so">以便不再依赖模糊记忆翻目录，先建立全局认知。</div>
+        </div>
+        <div class="story-card">
+          <div class="story-as">作为不知道从哪个 skill 开始的用户</div>
+          <div class="story-want">我希望看到一句话描述、分类和适用场景</div>
+          <div class="story-so">以便把“文件名”转换成我能理解的能力标签。</div>
+        </div>
+        <div class="story-card">
+          <div class="story-as">作为面对英文技能资产的中文用户</div>
+          <div class="story-want">我希望系统能生成中文展示层</div>
+          <div class="story-so">以便更自然地检索、理解和复用这些资产，而不是直接阅读英文原文。</div>
+        </div>
+        <div class="story-card">
+          <div class="story-as">作为担心破坏原文件的用户</div>
+          <div class="story-want">我希望补充信息只写到 sidecar metadata</div>
+          <div class="story-so">以便安全地整理和中文化，而不影响原始 skill 文件的完整性。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <div class="label reveal">Key Features</div>
+      <h2 class="section-title reveal">先把“集中 + 检索”做扎实，再扩展后续能力</h2>
+      <p class="section-subtitle reveal">当前版本优先围绕工作台总览、统一展示和搜索检索展开，让用户先解决“找不到”的问题，再逐步进入分析、整理与治理场景。</p>
+      <div class="cards-grid col-3">
+        <div class="card reveal">
+          <span class="feature-tag core">Discovery</span>
+          <h3>技能卡片总览</h3>
+          <p>把原本散落的本地资产整理成可浏览的能力卡片，突出名称、描述、分类、场景和来源等关键信息。</p>
+        </div>
+        <div class="card reveal">
+          <span class="feature-tag structure">Structure</span>
+          <h3>搜索与分层筛选</h3>
+          <p>支持按关键词、分类、来源和使用阶段筛选，让用户从“知道有很多”走向“找到当前正需要的那个”。</p>
+        </div>
+        <div class="card reveal">
+          <span class="feature-tag analysis">Analysis</span>
+          <h3>健康检查与问题摘要</h3>
+          <p>识别来源未知、描述缺失、疑似重复等治理问题，把总览页自然导向分析和整理动作。</p>
+        </div>
+        <div class="card reveal">
+          <span class="feature-tag localize">Localization</span>
+          <h3>中文展示层</h3>
+          <p>为英文原始 skill 生成中文标题、描述、标签与适用场景，优先服务中文用户的理解和检索。</p>
+        </div>
+        <div class="card reveal">
+          <span class="feature-tag safe">Safe Edit</span>
+          <h3>sidecar metadata 持久化</h3>
+          <p>所有补录和中文化结果都写入 sidecar 数据层，而不是改写原始资产文件，建立清晰的数据安全边界。</p>
+        </div>
+        <div class="card reveal">
+          <span class="feature-tag structure">Overview / Analysis / Organize</span>
+          <h3>信息架构分工</h3>
+          <p>首页看全貌，Analysis 看结构，Organize 做动作，避免首页既像文件管理器又像告警中心的职责混乱。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="decisions">
+    <div class="container">
+      <div class="label reveal">Product Decisions</div>
+      <h2 class="section-title reveal">为了先把核心价值做清楚，第一阶段刻意收窄边界</h2>
+      <p class="section-subtitle reveal">如果第一版同时追求治理、执行、编排和市场安装管理，页面会很完整，产品却会失焦。因此项目优先把“工作台集中展示 + 随时检索”这件事做透。</p>
+      <div class="decision-grid">
+        <div class="decision-card reveal">
+          <h3>不改原始 `SKILL.md`</h3>
+          <p>所有中文化、补录和来源确认都通过 sidecar metadata 完成。这样既保留原始资产的完整性，也降低了用户对“整理动作会不会破坏文件”的心理门槛。</p>
+          <ul class="decision-list">
+            <li>安全边界清晰</li>
+            <li>可编辑结果可持久化</li>
+            <li>刷新后状态可保留</li>
+          </ul>
+        </div>
+        <div class="decision-card reveal">
+          <h3>不做技能执行层</h3>
+          <p>MVP 阶段明确不接入技能执行或复杂 LLM 编排，因为当下用户最先缺的不是“运行”，而是“知道自己有什么”。</p>
+          <ul class="decision-list">
+            <li>避免执行层复杂度爆炸</li>
+            <li>聚焦认知问题而非自动化炫技</li>
+            <li>为后续 workflow 留出产品顺序</li>
+          </ul>
+        </div>
+        <div class="decision-card reveal">
+          <h3>先支持白名单平台</h3>
+          <p>V1 只扫描官方文档明确、路径稳定、用户价值高的本地目录。这个限制不是保守，而是为了让“识别到的都可信”。</p>
+          <ul class="decision-list">
+            <li>先保证路径识别的高置信度</li>
+            <li>减少猜测式扫描带来的脏数据</li>
+            <li>为统一模型打坚实基础</li>
+          </ul>
+        </div>
+        <div class="decision-card reveal">
+          <h3>先总览，再分析，再整理</h3>
+          <p>把页面拆成 Overview、Analysis、Organize，是因为用户第一次需要的是全局感，第二步才是看懂问题，第三步才是执行治理动作。</p>
+          <ul class="decision-list">
+            <li>首页建立规模感和结构感</li>
+            <li>分析页承担诊断职责</li>
+            <li>整理页承接补录与归档动作</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="container">
+      <div class="label reveal">Technical Architecture</div>
+      <h2 class="section-title reveal">技术结构服务于产品承诺，而不是反过来</h2>
+      <p class="section-subtitle reveal">技术方案围绕一个核心承诺展开：既要扫描真实本地资产、支持中文展示与补录，又不能冒险修改原文件。因此系统采用“原始解析结果 + sidecar metadata 覆盖结果”的双层数据模型。</p>
+
+      <div class="arch-diagram reveal">
+        <div class="arch-label orange">Data Sources</div>
+        <div class="arch-layer">
+          <div class="arch-box orange">本地技能目录<small>~/.codex/skills</small></div>
+          <div class="arch-box orange">多平台白名单路径<small>Cursor / Copilot / Claude Code ...</small></div>
+        </div>
+
+        <div class="arch-arrow">↓<span>扫描与识别</span></div>
+
+        <div class="arch-label purple">Parsing & Normalization</div>
+        <div class="arch-layer">
+          <div class="arch-box purple">skill-scanner<small>路径扫描 / 平台识别</small></div>
+          <div class="arch-box purple">skill-parser<small>SKILL.md / 元信息解析</small></div>
+          <div class="arch-box purple">统一模型<small>AIAsset / Skill</small></div>
+        </div>
+
+        <div class="arch-arrow">↓<span>原始结果与展示层合并</span></div>
+
+        <div class="arch-label green">Storage</div>
+        <div class="arch-layer">
+          <div class="arch-box green">metadata-store<small>sidecar metadata</small></div>
+          <div class="arch-box green">metadata.json<small>中文标题 / 标签 / 来源补录</small></div>
+        </div>
+
+        <div class="arch-arrow">↓<span>本地接口服务</span></div>
+
+        <div class="arch-label blue">Application</div>
+        <div class="arch-layer">
+          <div class="arch-box blue">Express API<small>scan / stats / metadata / localize</small></div>
+          <div class="arch-box blue">React + Vite<small>Overview / Analysis / Organize</small></div>
+        </div>
+
+        <div class="arch-arrow">↓<span>用户理解、补录与治理动作</span></div>
+
+        <div class="arch-label navy">User Layer</div>
+        <div class="arch-layer">
+          <div class="arch-box navy">总览认知<small>我拥有什么</small></div>
+          <div class="arch-box navy">问题分析<small>哪里不清晰</small></div>
+          <div class="arch-box navy">整理动作<small>如何补齐与保留</small></div>
+        </div>
+
+        <div class="tech-badges">
+          <span class="tech-badge">React 19</span>
+          <span class="tech-badge">Vite 6</span>
+          <span class="tech-badge">TypeScript</span>
+          <span class="tech-badge">Express</span>
+          <span class="tech-badge">metadata.json</span>
+          <span class="tech-badge">Lucide React</span>
+        </div>
+      </div>
+
+      <div class="insights-grid">
+        <div class="insight-card reveal">
+          <h3>安全性</h3>
+          <p>通过 sidecar metadata 覆盖展示层，而不是直接改写 `SKILL.md`，系统把“内容理解”和“原始资产”解耦，降低了整理行为的破坏风险。</p>
+        </div>
+        <div class="insight-card reveal">
+          <h3>可扩展性</h3>
+          <p>通过 `AIAsset` 统一模型，产品不再依赖某一个工具是否也使用 skill 这个名字，而是可以持续纳入不同平台的本地 AI 资产。</p>
+        </div>
+        <div class="insight-card reveal">
+          <h3>产品一致性</h3>
+          <p>Overview、Analysis、Organize 三层信息架构与后端的扫描、分析、补录能力一一对应，让页面结构和系统能力保持同向演进。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Skill Dashboard · 中文产品作品集页面</p>
+    <p>基于 README、PRD、Alpha 链路设计、统一数据模型文档与当前仓库结构整理生成。</p>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -48px 0px" });
+
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+
+    const sections = document.querySelectorAll("section[id]");
+    const navLinks = document.querySelectorAll(".nav-links a");
+
+    window.addEventListener("scroll", () => {
+      let current = "hero";
+      sections.forEach((section) => {
+        if (window.scrollY >= section.offsetTop - 120) {
+          current = section.getAttribute("id");
+        }
+      });
+
+      navLinks.forEach((link) => {
+        link.classList.toggle("active", link.getAttribute("href") === "#" + current);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -37,7 +37,14 @@ const SKILL_ROOT_GUIDES = [
   {
     id: 'cursor',
     name: 'Cursor',
-    paths: ['~/.cursor/skills-cursor', '~/.cursor/skills', '<workspace>/.cursor/skills'],
+    paths: [
+      '~/.cursor/skills-cursor',
+      '~/.cursor/skills',
+      '<workspace>/.cursor/skills',
+      'C:\\Users\\<用户名>\\.cursor\\skills-cursor',
+      'C:\\Users\\<用户名>\\.cursor\\skills',
+      '<workspace>\\.cursor\\skills',
+    ],
   },
   {
     id: 'claude',
@@ -70,8 +77,8 @@ type ImportUiState = 'idle' | 'success' | 'failed';
 const MAX_IMPORTED_RAW_CONTENT = 20_000;
 
 function maskPathForDisplay(input: string): string {
-  const normalized = input.replaceAll('/', '\\');
-  let output = normalized;
+  const isPosixStyle = input.startsWith('/') || input.startsWith('~/') || input.startsWith('<workspace>/');
+  let output = isPosixStyle ? input : input.replaceAll('/', '\\');
 
   output = output.replace(/^[A-Za-z]:\\Users\\[^\\]+/i, match => match.replace(/\\[^\\]+$/, '\\<用户名>'));
   output = output.replace(/\\AI-Coding\\skill dashboard/gi, '\\<workspace>');
@@ -83,6 +90,21 @@ function maskPathForDisplay(input: string): string {
   }
 
   return output;
+}
+
+function getPathHelpKnownPaths(source: ImportSource | 'unknown', os: 'windows' | 'macos' | 'linux' | 'unknown'): string[] {
+  const basePaths =
+    source === 'unknown'
+      ? SKILL_ROOT_GUIDES.flatMap(item => item.paths)
+      : (SKILL_ROOT_GUIDES.find(item => item.id === source)?.paths ?? []);
+
+  const filtered = basePaths.filter(path => {
+    if (os === 'windows') return path.includes('\\') || /^[A-Za-z]:/.test(path);
+    if (os === 'macos' || os === 'linux') return path.includes('/') && !path.includes('\\');
+    return true;
+  });
+
+  return [...new Set(filtered)];
 }
 
 function parseFrontmatter(raw: string): Record<string, string> {
@@ -219,6 +241,27 @@ function getSourceStatusStyle(status: SourceScanStatus['status']) {
   };
 }
 
+function buildFallbackSourceSummary(): SourceScanSummary {
+  const scannedAt = new Date().toISOString();
+  const sources: SourceScanStatus[] = SKILL_ROOT_GUIDES.map(item => ({
+    source: item.id,
+    label: item.name,
+    paths: [...item.paths],
+    status: 'unreachable',
+    skillCount: 0,
+    scannedSkillCount: 0,
+    importedSkillCount: 0,
+    lastScannedAt: scannedAt,
+    message: '暂未获取到扫描状态，请稍后重试',
+  }));
+
+  return {
+    sources,
+    totalDetectedSkills: 0,
+    scannedAt,
+  };
+}
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState<AppPage>('skills');
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -246,12 +289,19 @@ export default function App() {
   const [pathHelpLoading, setPathHelpLoading] = useState(false);
   const [pathHelpResult, setPathHelpResult] = useState<AIPathHelpResult | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dashboardLoadError, setDashboardLoadError] = useState<string | null>(null);
 
   const loadDashboardData = async () => {
     const [skillsRes, statsRes, sourceScanRes] = await Promise.all([api.getSkills(), api.getStats(), api.getSourceScanSummary()]);
     if (skillsRes.success) setSkills(skillsRes.data.skills);
     if (statsRes.success) setStatsData(statsRes.data);
-    if (sourceScanRes.success) setSourceScanSummary(sourceScanRes.data);
+    setSourceScanSummary(sourceScanRes.success ? sourceScanRes.data : buildFallbackSourceSummary());
+
+    const errors = [skillsRes, statsRes, sourceScanRes]
+      .filter(item => !item.success)
+      .map(item => ('error' in item ? item.error : undefined))
+      .filter((item): item is string => Boolean(item));
+    setDashboardLoadError(errors.length > 0 ? errors.join('；') : null);
   };
 
   useEffect(() => {
@@ -360,7 +410,7 @@ export default function App() {
   const handleAskPathHelp = async () => {
     if (!pathHelpQuery.trim()) return;
     setPathHelpLoading(true);
-    const knownPaths = sourceScanSummary?.sources.flatMap(item => item.paths) ?? [];
+    const knownPaths = getPathHelpKnownPaths(pathHelpSource, pathHelpOs);
     const result = await askPathHelp({
       message: pathHelpQuery.trim(),
       source: pathHelpSource,
@@ -427,6 +477,7 @@ export default function App() {
                   loading={loading}
                   sourceScanSummary={sourceScanSummary}
                   localizeFeedback={localizeFeedback}
+                  dashboardLoadError={dashboardLoadError}
                   onCategoryChange={category => {
                     setSelectedCategory(category);
                     setSelectedSkillId(null);
@@ -464,7 +515,7 @@ export default function App() {
 
             {currentPage === 'health' && (
               <motion.div key="health" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <HealthCheck skills={skills} onNavigateToSkill={handleNavigateToSkill} />
+                <HealthCheck skills={skills} onNavigateToSkill={handleNavigateToSkill} onSkillPatched={handleSkillUpdate} />
               </motion.div>
             )}
 
@@ -507,6 +558,7 @@ function SkillLibraryPage({
   loading,
   sourceScanSummary,
   localizeFeedback,
+  dashboardLoadError,
   onCategoryChange,
   onSourceChange,
   onSkillSelect,
@@ -537,6 +589,7 @@ function SkillLibraryPage({
   loading: boolean;
   sourceScanSummary: SourceScanSummary | null;
   localizeFeedback: string | null;
+  dashboardLoadError: string | null;
   onCategoryChange: (cat: FilterCategory) => void;
   onSourceChange: (source: SourceFilter) => void;
   onSkillSelect: (id: string) => void;
@@ -582,6 +635,12 @@ function SkillLibraryPage({
             <div className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-success/30 bg-success/10 px-3 py-1.5 text-[12px] text-success">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>{localizeFeedback}</span>
+            </div>
+          )}
+
+          {dashboardLoadError && (
+            <div className="mt-3 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-[12px] text-warning">
+              数据加载不完整：{dashboardLoadError}
             </div>
           )}
 

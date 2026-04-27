@@ -142,20 +142,18 @@ export async function importSkills(context: ScanContext, incoming: Skill[]) {
 export async function getSourceScanSummary(context: ScanContext): Promise<SourceScanSummary> {
   const scannedAt = new Date().toISOString();
   const importedSkills = await getImportedSkills(context);
-  const importedCountBySource = importedSkills.reduce<Record<SourceId, number>>(
-    (acc, skill) => {
-      const source = inferSourceFromPath(skill.sourcePath);
-      if (source !== 'unknown') acc[source] += 1;
-      return acc;
-    },
-    { codex: 0, cursor: 0, claude: 0 },
-  );
 
   const sources = await Promise.all(
     SOURCE_SCAN_ROOTS.map(async target => {
       const results = await Promise.all(target.paths.map(scanSingleRoot));
-      const scannedSkillCount = results.reduce((sum, item) => sum + item.skills.length, 0);
-      const importedSkillCount = importedCountBySource[target.source] ?? 0;
+      const scannedSkills = results.flatMap(item => item.skills);
+      const importedBySource = importedSkills.filter(skill => inferSourceFromPath(skill.sourcePath) === target.source);
+
+      const scannedFingerprints = new Set(scannedSkills.map(getSkillFingerprint));
+      const importedFingerprints = new Set(importedBySource.map(getSkillFingerprint));
+
+      const scannedSkillCount = scannedFingerprints.size;
+      const importedSkillCount = [...importedFingerprints].filter(fingerprint => !scannedFingerprints.has(fingerprint)).length;
       const skillCount = scannedSkillCount + importedSkillCount;
 
       const hasDetected = results.some(item => item.state === 'detected') || importedSkillCount > 0;
@@ -195,4 +193,3 @@ export async function updateSkillMetadata(context: ScanContext, skillId: string,
   const skills = await getMergedSkills(context);
   return skills.find(skill => skill.id === skillId) ?? null;
 }
-
