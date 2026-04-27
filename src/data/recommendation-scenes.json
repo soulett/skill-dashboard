@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "updatedAt": "2026-04-27T00:00:00.000Z",
+  "scenes": [
+    {
+      "scene_id": "write-prd",
+      "label": "写 PRD",
+      "description": "整理需求、定义功能边界、收敛 MVP",
+      "priority": 1,
+      "query": {
+        "categories": ["产品设计"],
+        "tags": ["prd", "需求分析", "头脑风暴", "spec"],
+        "keywords": ["PRD", "需求", "产品定义", "spec"]
+      },
+      "reason_template": "当前任务偏需求定义与方案收敛，优先推荐 PRD、分析和 brainstorming 相关 skill。"
+    },
+    {
+      "scene_id": "product-analysis",
+      "label": "做产品分析",
+      "description": "整理问题、做竞品分析、拆解产品逻辑",
+      "priority": 2,
+      "query": {
+        "categories": ["产品设计", "数据分析"],
+        "tags": ["需求分析", "头脑风暴", "review", "analysis"],
+        "keywords": ["分析", "竞品", "需求", "review"]
+      },
+      "reason_template": "当前任务偏问题定义和分析拆解，优先推荐分析、评审和 brainstorming 相关 skill。"
+    },
+    {
+      "scene_id": "build-frontend-page",
+      "label": "做前端页面",
+      "description": "生成页面、设计界面、整理前端表达",
+      "priority": 3,
+      "query": {
+        "categories": ["编程开发", "产品设计"],
+        "tags": ["前端", "frontend-design", "HTML", "CSS", "React", "设计"],
+        "keywords": ["前端", "页面", "frontend", "html", "react"]
+      },
+      "reason_template": "当前任务偏页面实现与视觉表达，优先推荐前端设计和页面生成相关 skill。"
+    },
+    {
+      "scene_id": "build-portfolio-page",
+      "label": "做产品作品集",
+      "description": "把项目内容整理成可展示、可讲述的页面",
+      "priority": 4,
+      "query": {
+        "categories": ["产品设计", "内容创作"],
+        "tags": ["作品集", "portfolio", "HTML", "页面生成", "产品表达"],
+        "keywords": ["作品集", "portfolio", "页面", "项目表达"]
+      },
+      "reason_template": "当前任务偏产品表达与页面包装，优先推荐作品集和页面生成相关 skill。"
+    },
+    {
+      "scene_id": "open-official-docs",
+      "label": "查官方文档",
+      "description": "快速定位 API、平台说明和官方资料",
+      "priority": 5,
+      "query": {
+        "categories": ["编程开发", "内容创作"],
+        "tags": ["文档", "docs", "API", "openai-docs", "browser"],
+        "keywords": ["文档", "api", "docs", "官方"]
+      },
+      "reason_template": "当前任务偏资料查询与官方说明定位，优先推荐文档检索、浏览器和 API 相关 skill。"
+    },
+    {
+      "scene_id": "read-codebase",
+      "label": "读代码 / 理解仓库",
+      "description": "理解仓库结构、阅读逻辑、辅助调试",
+      "priority": 6,
+      "query": {
+        "categories": ["编程开发"],
+        "tags": ["browser", "playwright", "api", "plugin", "code"],
+        "keywords": ["代码", "仓库", "debug", "plugin", "browser"]
+      },
+      "reason_template": "当前任务偏代码理解与仓库阅读，优先推荐浏览器、插件和开发辅助相关 skill。"
+    },
+    {
+      "scene_id": "organize-skills",
+      "label": "整理技能资产",
+      "description": "梳理本地 skill、整理路线、补充元信息",
+      "priority": 7,
+      "query": {
+        "categories": ["效率流程", "内容创作", "产品设计"],
+        "tags": ["路线图", "workflow", "sync", "Markdown", "整理"],
+        "keywords": ["整理", "roadmap", "workflow", "sync", "markdown"]
+      },
+      "reason_template": "当前任务偏整理与结构化管理，优先推荐路线图、流程和文档整理相关 skill。"
+    }
+  ]
+}

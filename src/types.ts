@@ -159,3 +159,69 @@ export interface SkillEdge {
   score: number;
   sharedTags: string[];
 }
+
+export interface RecommendationSceneQuery {
+  categories: string[];
+  tags: string[];
+  keywords: string[];
+}
+
+export interface RecommendationScene {
+  scene_id: string;
+  label: string;
+  description: string;
+  priority: number;
+  query: RecommendationSceneQuery;
+  reason_template: string;
+}
+
+export interface SeedSkillRecord {
+  platform: string;
+  skill_id: string;
+  title_normalized: string;
+  display_title: string;
+  description_short: string;
+  category_l1: string;
+  category_refined?: string;
+  tags_rule: string[];
+  tags_curated: string[];
+  scenes_hint: string[];
+  recommended_reason_templates: string[];
+  capability_summary: string;
+  source_path: string;
+  health_status_basic: 'complete' | 'partial' | 'unknown';
+  language: 'zh' | 'en' | 'mixed' | string;
+  install_status: 'installed' | 'imported' | 'detected' | string;
+}
+
+export interface SeedSkillRegistry {
+  version: number;
+  updatedAt: string;
+  source: string;
+  skills: SeedSkillRecord[];
+}
+
+export interface RecommendationCardItem {
+  id: string;
+  title: string;
+  description: string;
+  recommendationReason: string;
+  sourceLabel: string;
+  sourceClassName: string;
+  healthLabel: string;
+  healthClassName: string;
+  tags: string[];
+  matchedSkillId: string | null;
+}
+
+export interface RecommendationCoverageSummary {
+  matchedCount: number;
+  incompleteCount: number;
+  totalCandidates: number;
+}
+
+export interface SceneRecommendationResult {
+  scene: RecommendationScene;
+  items: RecommendationCardItem[];
+  coverage: RecommendationCoverageSummary;
+}

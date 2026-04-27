@@ -1,0 +1,1208 @@
+{
+  "version": 1,
+  "updatedAt": "2026-04-27T06:01:11.905Z",
+  "source": "manual-seed-generated-from-local-skills",
+  "skills": [
+    {
+      "platform": "codex",
+      "skill_id": "codex/brainstorming",
+      "title_normalized": "brainstorming",
+      "display_title": "头脑风暴设计器",
+      "description_short": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying…",
+      "category_l1": "产品设计",
+      "category_refined": "问题定义 / 方案发散",
+      "tags_rule": [
+        "brainstorming",
+        "design",
+        "spec"
+      ],
+      "tags_curated": [
+        "头脑风暴",
+        "设计",
+        "spec"
+      ],
+      "scenes_hint": [
+        "写 PRD",
+        "做产品分析"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“写 PRD”场景",
+        "标签与当前任务高度相关：头脑风暴 / 设计",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying…，更适合用于“写 PRD”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/brainstorming/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/analyst",
+      "title_normalized": "Business Analyst",
+      "display_title": "Business Analyst",
+      "description_short": "Product discovery and requirements analysis specialist",
+      "category_l1": "产品设计",
+      "category_refined": "问题定义 / 方案发散",
+      "tags_rule": [
+        "analyst",
+        "research"
+      ],
+      "tags_curated": [
+        "需求分析",
+        "research"
+      ],
+      "scenes_hint": [
+        "写 PRD",
+        "做产品分析"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“写 PRD”场景",
+        "标签与当前任务高度相关：需求分析 / research",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Product discovery and requirements analysis specialist，更适合用于“写 PRD”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/analyst/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/doc",
+      "title_normalized": "doc",
+      "display_title": "Doc",
+      "description_short": "Use when the task involves reading, creating, or editing `.docx` documents, especially when formatting or layout fideli…",
+      "category_l1": "内容创作",
+      "category_refined": "内容创作",
+      "tags_rule": [
+        "doc",
+        "docx",
+        "pdf",
+        "python-docx"
+      ],
+      "tags_curated": [
+        "doc",
+        "Docx",
+        "PDF",
+        "python-docx"
+      ],
+      "scenes_hint": [
+        "写 PRD"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“写 PRD”场景",
+        "标签与当前任务高度相关：doc / Docx",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Use when the task involves reading, creating, or editing `.docx` documents, especially when formatting or layout fideli…，更适合用于“写 PRD”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/doc/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/extract-learning-roadmap",
+      "title_normalized": "extract-learning-roadmap",
+      "display_title": "Extract Learning Roadmap",
+      "description_short": "Extract a staged learning roadmap from local materials with significantly expanded links and detailed split sections (v…",
+      "category_l1": "内容创作",
+      "category_refined": "内容创作",
+      "tags_rule": [
+        "extract-learning-roadmap",
+        "roadmap",
+        "pdf"
+      ],
+      "tags_curated": [
+        "extract-learning-roadmap",
+        "路线图",
+        "PDF"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：extract-learning-roadmap / 路线图",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Extract a staged learning roadmap from local materials with significantly expanded links and detailed split sections (v…，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/extract-learning-roadmap/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/frontend-design",
+      "title_normalized": "frontend-design",
+      "display_title": "前端设计",
+      "description_short": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to…",
+      "category_l1": "编程开发",
+      "category_refined": "页面实现 / 界面表达",
+      "tags_rule": [
+        "frontend-design",
+        "design",
+        "frontend"
+      ],
+      "tags_curated": [
+        "frontend-design",
+        "设计",
+        "前端"
+      ],
+      "scenes_hint": [
+        "做前端页面"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“做前端页面”场景",
+        "标签与当前任务高度相关：frontend-design / 设计",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to…，更适合用于“做前端页面”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/frontend-design/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/frontend-skill",
+      "title_normalized": "frontend-skill",
+      "display_title": "Frontend Skill",
+      "description_short": "Use when the task asks for a visually strong landing page, website, app, prototype, demo, or game UI. This skill enforc…",
+      "category_l1": "编程开发",
+      "category_refined": "页面实现 / 界面表达",
+      "tags_rule": [
+        "frontend-skill"
+      ],
+      "tags_curated": [
+        "frontend-skill"
+      ],
+      "scenes_hint": [
+        "做前端页面"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“做前端页面”场景",
+        "标签与当前任务高度相关：frontend-skill",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Use when the task asks for a visually strong landing page, website, app, prototype, demo, or game UI. This skill enforc…，更适合用于“做前端页面”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/frontend-skill/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/.system-imagegen",
+      "title_normalized": "imagegen",
+      "display_title": "Imagegen",
+      "description_short": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, tex…",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "imagegen",
+        "built-in"
+      ],
+      "tags_curated": [
+        "图像生成",
+        "built-in"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：图像生成 / built-in",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, tex…，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/.system/imagegen/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/jupyter-notebook",
+      "title_normalized": "jupyter-notebook",
+      "display_title": "Jupyter Notebook",
+      "description_short": "Use when the user asks to create, scaffold, or edit Jupyter notebooks (`.ipynb`) for experiments, explorations, or tuto…",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "jupyter-notebook",
+        "notebook",
+        "jupyter"
+      ],
+      "tags_curated": [
+        "jupyter-notebook",
+        "notebook",
+        "Jupyter"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：jupyter-notebook / notebook",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Use when the user asks to create, scaffold, or edit Jupyter notebooks (`.ipynb`) for experiments, explorations, or tuto…，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/jupyter-notebook/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/markdown-to-pdf",
+      "title_normalized": "markdown-to-pdf",
+      "display_title": "Markdown To Pdf",
+      "description_short": "Use when the user wants to convert one or more Markdown files into PDF, especially on Windows machines where Node.js is…",
+      "category_l1": "内容创作",
+      "category_refined": "内容创作",
+      "tags_rule": [
+        "markdown-to-pdf",
+        "markdown",
+        "pdf",
+        "md-to-pdf",
+        "browser"
+      ],
+      "tags_curated": [
+        "markdown-to-pdf",
+        "Markdown",
+        "PDF",
+        "md-to-pdf"
+      ],
+      "scenes_hint": [
+        "写 PRD"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“写 PRD”场景",
+        "标签与当前任务高度相关：markdown-to-pdf / Markdown",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Use when the user wants to convert one or more Markdown files into PDF, especially on Windows machines where Node.js is…，更适合用于“写 PRD”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/markdown-to-pdf/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/notion-research-documentation",
+      "title_normalized": "notion-research-documentation",
+      "display_title": "Notion Research Documentation",
+      "description_short": "Research across Notion and synthesize into structured documentation; use when gathering info from multiple Notion sourc…",
+      "category_l1": "内容创作",
+      "category_refined": "内容创作",
+      "tags_rule": [
+        "notion-research-documentation",
+        "notion"
+      ],
+      "tags_curated": [
+        "notion-research-documentation",
+        "Notion"
+      ],
+      "scenes_hint": [
+        "查官方文档"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“查官方文档”场景",
+        "标签与当前任务高度相关：notion-research-documentation / Notion",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Research across Notion and synthesize into structured documentation; use when gathering info from multiple Notion sourc…，更适合用于“查官方文档”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/notion-research-documentation/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/notion-spec-to-implementation",
+      "title_normalized": "notion-spec-to-implementation",
+      "display_title": "Notion Spec To Implementation",
+      "description_short": "Turn Notion specs into implementation plans, tasks, and progress tracking; use when implementing PRDs/feature specs and…",
+      "category_l1": "产品设计",
+      "category_refined": "产品设计",
+      "tags_rule": [
+        "notion-spec-to-implementation",
+        "notion",
+        "spec"
+      ],
+      "tags_curated": [
+        "notion-spec-to-implementation",
+        "Notion",
+        "spec"
+      ],
+      "scenes_hint": [
+        "写 PRD"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“写 PRD”场景",
+        "标签与当前任务高度相关：notion-spec-to-implementation / Notion",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Turn Notion specs into implementation plans, tasks, and progress tracking; use when implementing PRDs/feature specs and…，更适合用于“写 PRD”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/notion-spec-to-implementation/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/.system-openai-docs",
+      "title_normalized": "openai-docs",
+      "display_title": "OpenAI Docs",
+      "description_short": "Use when the user asks how to build with OpenAI products or APIs and needs up-to-date official documentation with citat…",
+      "category_l1": "编程开发",
+      "category_refined": "官方文档 / 技术资料查询",
+      "tags_rule": [
+        "openai-docs",
+        "docs",
+        "api"
+      ],
+      "tags_curated": [
+        "openai-docs",
+        "文档",
+        "API"
+      ],
+      "scenes_hint": [
+        "查官方文档"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“查官方文档”场景",
+        "标签与当前任务高度相关：openai-docs / 文档",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Use when the user asks how to build with OpenAI products or APIs and needs up-to-date official documentation with citat…，更适合用于“查官方文档”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/.system/openai-docs/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/paper-project-picker",
+      "title_normalized": "paper-project-picker",
+      "display_title": "Paper Project Picker",
+      "description_short": "Find one paper from a user keyword and rewrite it as a Chinese interview-ready project summary. Use when the user wants…",
+      "category_l1": "内容创作",
+      "category_refined": "内容创作",
+      "tags_rule": [
+        "paper-project-picker",
+        "paper"
+      ],
+      "tags_curated": [
+        "paper-project-picker",
+        "paper"
+      ],
+      "scenes_hint": [
+        "查官方文档"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“查官方文档”场景",
+        "标签与当前任务高度相关：paper-project-picker / paper",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Find one paper from a user keyword and rewrite it as a Chinese interview-ready project summary. Use when the user wants…，更适合用于“查官方文档”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/paper-project-picker/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "mixed",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/paper-to-project-tech-note",
+      "title_normalized": "paper-to-project-tech-note",
+      "display_title": "Paper To Project Tech Note",
+      "description_short": "Turn a paper PDF or research-style technical document into a long-form project teaching note for beginners. Use when Co…",
+      "category_l1": "内容创作",
+      "category_refined": "内容创作",
+      "tags_rule": [
+        "paper-to-project-tech-note"
+      ],
+      "tags_curated": [
+        "paper-to-project-tech-note"
+      ],
+      "scenes_hint": [
+        "查官方文档"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“查官方文档”场景",
+        "标签与当前任务高度相关：paper-to-project-tech-note",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Turn a paper PDF or research-style technical document into a long-form project teaching note for beginners. Use when Co…，更适合用于“查官方文档”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/paper-to-project-tech-note/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/pdf",
+      "title_normalized": "pdf",
+      "display_title": "Pdf",
+      "description_short": "Use when tasks involve reading, creating, or reviewing PDF files where rendering and layout matter; prefer visual check…",
+      "category_l1": "内容创作",
+      "category_refined": "内容创作",
+      "tags_rule": [
+        "pdf",
+        "pdfplumber",
+        "pypdf"
+      ],
+      "tags_curated": [
+        "PDF",
+        "pdfplumber",
+        "pypdf"
+      ],
+      "scenes_hint": [
+        "做产品分析"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“做产品分析”场景",
+        "标签与当前任务高度相关：PDF / pdfplumber",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Use when tasks involve reading, creating, or reviewing PDF files where rendering and layout matter; prefer visual check…，更适合用于“做产品分析”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/pdf/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/playwright",
+      "title_normalized": "playwright",
+      "display_title": "Playwright",
+      "description_short": "Use when the task requires automating a real browser from the terminal (navigation, form filling, snapshots, screenshot…",
+      "category_l1": "编程开发",
+      "category_refined": "编程开发",
+      "tags_rule": [
+        "playwright"
+      ],
+      "tags_curated": [
+        "自动化测试"
+      ],
+      "scenes_hint": [
+        "读代码 / 理解仓库"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“读代码 / 理解仓库”场景",
+        "标签与当前任务高度相关：自动化测试",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Use when the task requires automating a real browser from the terminal (navigation, form filling, snapshots, screenshot…，更适合用于“读代码 / 理解仓库”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/playwright/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/.system-plugin-creator",
+      "title_normalized": "plugin-creator",
+      "display_title": "Plugin Creator",
+      "description_short": "Create and scaffold plugin directories for Codex with a required `.codex-plugin/plugin.json`, optional plugin folders/f…",
+      "category_l1": "编程开发",
+      "category_refined": "编程开发",
+      "tags_rule": [
+        "plugin-creator",
+        "plugin",
+        "plugins",
+        "plugin-name"
+      ],
+      "tags_curated": [
+        "plugin-creator",
+        "插件",
+        "plugins",
+        "plugin-name"
+      ],
+      "scenes_hint": [
+        "读代码 / 理解仓库"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“读代码 / 理解仓库”场景",
+        "标签与当前任务高度相关：plugin-creator / 插件",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Create and scaffold plugin directories for Codex with a required `.codex-plugin/plugin.json`, optional plugin folders/f…，更适合用于“读代码 / 理解仓库”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/.system/plugin-creator/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/pm-portfolio-generator",
+      "title_normalized": "pm-portfolio-generator",
+      "display_title": "PM 作品集页面生成器",
+      "description_short": "通过分析代码仓库中的文档、架构说明与源码结构，生成一页式 PM / 产品作品集 HTML 页面。适用于产品经理作品集、项目展示页、案例复盘页或将仓库整理成可讲述的产品页面。",
+      "category_l1": "产品设计",
+      "category_refined": "产品表达 / 作品集包装",
+      "tags_rule": [
+        "pm-portfolio-generator",
+        "html",
+        "prd"
+      ],
+      "tags_curated": [
+        "pm-portfolio-generator",
+        "HTML",
+        "PRD"
+      ],
+      "scenes_hint": [
+        "写 PRD",
+        "做产品作品集",
+        "做前端页面"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“写 PRD”场景",
+        "标签与当前任务高度相关：pm-portfolio-generator / HTML",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "通过分析代码仓库中的文档、架构说明与源码结构，生成一页式 PM / 产品作品集 HTML 页面。适用于产品经理作品集、项目展示页、案例复盘页或将仓库整理成可讲述的产品页面。，更适合用于“写 PRD”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/pm-portfolio-generator/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "mixed",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/prd",
+      "title_normalized": "prd",
+      "display_title": "PRD 生成器",
+      "description_short": "Generate a Product Requirements Document (PRD) for a new feature. Use when planning a feature, starting a new project, …",
+      "category_l1": "产品设计",
+      "category_refined": "需求定义 / PRD 编写",
+      "tags_rule": [
+        "prd",
+        "---"
+      ],
+      "tags_curated": [
+        "PRD",
+        "---"
+      ],
+      "scenes_hint": [
+        "写 PRD"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“写 PRD”场景",
+        "标签与当前任务高度相关：PRD / ---",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Generate a Product Requirements Document (PRD) for a new feature. Use when planning a feature, starting a new project, …，更适合用于“写 PRD”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/prd/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/project-doc-to-qa",
+      "title_normalized": "project-doc-to-qa",
+      "display_title": "Project Doc To Qa",
+      "description_short": "Generate postgraduate interview Q&A documents from a project brief, project README, outline, notes, or other project do…",
+      "category_l1": "内容创作",
+      "category_refined": "内容创作",
+      "tags_rule": [
+        "project-doc-to-qa"
+      ],
+      "tags_curated": [
+        "project-doc-to-qa"
+      ],
+      "scenes_hint": [
+        "查官方文档"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“查官方文档”场景",
+        "标签与当前任务高度相关：project-doc-to-qa",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Generate postgraduate interview Q&A documents from a project brief, project README, outline, notes, or other project do…，更适合用于“查官方文档”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/project-doc-to-qa/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "mixed",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/project-doc-to-roadmap",
+      "title_normalized": "project-doc-to-roadmap",
+      "display_title": "Project Doc To Roadmap",
+      "description_short": "Generate a stage-based project learning roadmap (入门/前期/中期/后期) with dependency-aware modules, significantly expanded lin…",
+      "category_l1": "内容创作",
+      "category_refined": "内容创作",
+      "tags_rule": [
+        "project-doc-to-roadmap",
+        "roadmap"
+      ],
+      "tags_curated": [
+        "project-doc-to-roadmap",
+        "路线图"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：project-doc-to-roadmap / 路线图",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Generate a stage-based project learning roadmap (入门/前期/中期/后期) with dependency-aware modules, significantly expanded lin…，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/project-doc-to-roadmap/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "mixed",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/project-doc-to-terms",
+      "title_normalized": "project-doc-to-terms",
+      "display_title": "Project Doc To Terms",
+      "description_short": "Generate a project-specific terminology explanation document from a project brief, technical note, README, outline, or …",
+      "category_l1": "产品设计",
+      "category_refined": "产品设计",
+      "tags_rule": [
+        "project-doc-to-terms",
+        "terms",
+        "document"
+      ],
+      "tags_curated": [
+        "project-doc-to-terms",
+        "terms",
+        "document"
+      ],
+      "scenes_hint": [
+        "写 PRD"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“写 PRD”场景",
+        "标签与当前任务高度相关：project-doc-to-terms / terms",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Generate a project-specific terminology explanation document from a project brief, technical note, README, outline, or …，更适合用于“写 PRD”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/project-doc-to-terms/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "mixed",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/screenshot",
+      "title_normalized": "screenshot",
+      "display_title": "Screenshot",
+      "description_short": "Use when the user explicitly asks for a desktop or system screenshot (full screen, specific app or window, or a pixel r…",
+      "category_l1": "产品设计",
+      "category_refined": "产品设计",
+      "tags_rule": [
+        "path-to-skill"
+      ],
+      "tags_curated": [
+        "path-to-skill"
+      ],
+      "scenes_hint": [
+        "写 PRD"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“写 PRD”场景",
+        "标签与当前任务高度相关：path-to-skill",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Use when the user explicitly asks for a desktop or system screenshot (full screen, specific app or window, or a pixel r…，更适合用于“写 PRD”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/screenshot/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/.system-skill-creator",
+      "title_normalized": "skill-creator",
+      "display_title": "Skill Creator",
+      "description_short": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an exis…",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "skill-creator"
+      ],
+      "tags_curated": [
+        "skill-creator"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：skill-creator",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an exis…，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/.system/skill-creator/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/.system-skill-installer",
+      "title_normalized": "skill-installer",
+      "display_title": "Skill Installer",
+      "description_short": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list in…",
+      "category_l1": "编程开发",
+      "category_refined": "编程开发",
+      "tags_rule": [
+        "skill-installer"
+      ],
+      "tags_curated": [
+        "skill-installer"
+      ],
+      "scenes_hint": [
+        "读代码 / 理解仓库"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“读代码 / 理解仓库”场景",
+        "标签与当前任务高度相关：skill-installer",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list in…，更适合用于“读代码 / 理解仓库”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/.system/skill-installer/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/skill-repo-sync",
+      "title_normalized": "skill-repo-sync",
+      "display_title": "Skill Repo Sync",
+      "description_short": "Safely sync a local skill repository to GitHub using a repeatable SOP. Use when Codex needs to stage, commit, rebase, a…",
+      "category_l1": "效率流程",
+      "category_refined": "效率流程",
+      "tags_rule": [
+        "skill-repo-sync"
+      ],
+      "tags_curated": [
+        "skill-repo-sync"
+      ],
+      "scenes_hint": [
+        "读代码 / 理解仓库",
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“读代码 / 理解仓库”场景",
+        "标签与当前任务高度相关：skill-repo-sync",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Safely sync a local skill repository to GitHub using a repeatable SOP. Use when Codex needs to stage, commit, rebase, a…，更适合用于“读代码 / 理解仓库”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/skill-repo-sync/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/tech-note-module-splitter",
+      "title_normalized": "tech-note-module-splitter",
+      "display_title": "Tech Note Module Splitter",
+      "description_short": "Split one long project tech note into top interview-critical module markdown files with strict per-file Chinese non-cod…",
+      "category_l1": "编程开发",
+      "category_refined": "编程开发",
+      "tags_rule": [
+        "tech-note-module-splitter",
+        "non-code"
+      ],
+      "tags_curated": [
+        "tech-note-module-splitter",
+        "non-code"
+      ],
+      "scenes_hint": [
+        "读代码 / 理解仓库"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“读代码 / 理解仓库”场景",
+        "标签与当前任务高度相关：tech-note-module-splitter / non-code",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Split one long project tech note into top interview-critical module markdown files with strict per-file Chinese non-cod…，更适合用于“读代码 / 理解仓库”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/tech-note-module-splitter/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "mixed",
+      "install_status": "installed"
+    },
+    {
+      "platform": "codex",
+      "skill_id": "codex/writing-plans",
+      "title_normalized": "writing-plans",
+      "display_title": "Writing Plans",
+      "description_short": "Use when you have a spec or requirements for a multi-step task, before touching code",
+      "category_l1": "产品设计",
+      "category_refined": "产品设计",
+      "tags_rule": [
+        "writing-plans"
+      ],
+      "tags_curated": [
+        "writing-plans"
+      ],
+      "scenes_hint": [
+        "写 PRD",
+        "读代码 / 理解仓库"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“写 PRD”场景",
+        "标签与当前任务高度相关：writing-plans",
+        "来自本地 codex 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": "Use when you have a spec or requirements for a multi-step task, before touching code，更适合用于“写 PRD”这类任务。",
+      "source_path": "C:/Users/14316/.codex/skills/writing-plans/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/babysit",
+      "title_normalized": "babysit",
+      "display_title": "Babysit",
+      "description_short": ">-",
+      "category_l1": "效率流程",
+      "category_refined": "效率流程",
+      "tags_rule": [
+        "babysit",
+        "---"
+      ],
+      "tags_curated": [
+        "babysit",
+        "---"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：babysit / ---",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/babysit/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/canvas",
+      "title_normalized": "canvas",
+      "display_title": "Canvas",
+      "description_short": ">-",
+      "category_l1": "编程开发",
+      "category_refined": "编程开发",
+      "tags_rule": [
+        "canvas"
+      ],
+      "tags_curated": [
+        "canvas"
+      ],
+      "scenes_hint": [
+        "读代码 / 理解仓库"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“读代码 / 理解仓库”场景",
+        "标签与当前任务高度相关：canvas",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“读代码 / 理解仓库”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/canvas/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/create-hook",
+      "title_normalized": "create-hook",
+      "display_title": "Create Hook",
+      "description_short": ">-",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "create-hook"
+      ],
+      "tags_curated": [
+        "create-hook"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：create-hook",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/create-hook/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/create-rule",
+      "title_normalized": "create-rule",
+      "display_title": "Create Rule",
+      "description_short": ">-",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "create-rule",
+        "---"
+      ],
+      "tags_curated": [
+        "create-rule",
+        "---"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：create-rule / ---",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/create-rule/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/create-skill",
+      "title_normalized": "create-skill",
+      "display_title": "Create Skill",
+      "description_short": ">-",
+      "category_l1": "内容创作",
+      "category_refined": "内容创作",
+      "tags_rule": [
+        "create-skill",
+        "pdf"
+      ],
+      "tags_curated": [
+        "create-skill",
+        "PDF"
+      ],
+      "scenes_hint": [
+        "查官方文档"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“查官方文档”场景",
+        "标签与当前任务高度相关：create-skill / PDF",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“查官方文档”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/create-skill/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/create-subagent",
+      "title_normalized": "create-subagent",
+      "display_title": "Create Subagent",
+      "description_short": ">-",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "create-subagent",
+        "---"
+      ],
+      "tags_curated": [
+        "create-subagent",
+        "---"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：create-subagent / ---",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/create-subagent/SKILL.md",
+      "health_status_basic": "complete",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/migrate-to-skills",
+      "title_normalized": "migrate-to-skills",
+      "display_title": "Migrate To Skills",
+      "description_short": ">-",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "migrate-to-skills"
+      ],
+      "tags_curated": [
+        "migrate-to-skills"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：migrate-to-skills",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/migrate-to-skills/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/shell",
+      "title_normalized": "shell",
+      "display_title": "Shell",
+      "description_short": ">-",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "---"
+      ],
+      "tags_curated": [
+        "---"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：---",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/shell/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/split-to-prs",
+      "title_normalized": "split-to-prs",
+      "display_title": "Split To Prs",
+      "description_short": ">-",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "split-to-prs"
+      ],
+      "tags_curated": [
+        "split-to-prs"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：split-to-prs",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/split-to-prs/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/statusline",
+      "title_normalized": "statusline",
+      "display_title": "Statusline",
+      "description_short": ">-",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [],
+      "tags_curated": [
+        "其他"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：其他",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/statusline/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/update-cli-config",
+      "title_normalized": "update-cli-config",
+      "display_title": "Update Cli Config",
+      "description_short": ">-",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "update-cli-config"
+      ],
+      "tags_curated": [
+        "update-cli-config"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：update-cli-config",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/update-cli-config/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    },
+    {
+      "platform": "cursor",
+      "skill_id": "cursor/update-cursor-settings",
+      "title_normalized": "update-cursor-settings",
+      "display_title": "Update Cursor Settings",
+      "description_short": ">-",
+      "category_l1": "其他",
+      "category_refined": "其他",
+      "tags_rule": [
+        "update-cursor-settings"
+      ],
+      "tags_curated": [
+        "update-cursor-settings"
+      ],
+      "scenes_hint": [
+        "整理技能资产"
+      ],
+      "recommended_reason_templates": [
+        "适合当前“整理技能资产”场景",
+        "标签与当前任务高度相关：update-cursor-settings",
+        "来自本地 cursor 平台，可直接纳入当前工作流"
+      ],
+      "capability_summary": ">-，更适合用于“整理技能资产”这类任务。",
+      "source_path": "C:/Users/14316/.cursor/skills-cursor/update-cursor-settings/SKILL.md",
+      "health_status_basic": "partial",
+      "language": "en",
+      "install_status": "installed"
+    }
+  ]
+}

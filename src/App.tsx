@@ -10,8 +10,12 @@ import StatsCard from './components/StatsCard';
 import TopBar from './components/TopBar';
 import HealthCheck from './components/pages/HealthCheck';
 import Marketplace from './components/pages/Marketplace';
+import RecommendationHome from './components/pages/RecommendationHome';
 import SkillMap from './components/pages/SkillMap';
-import { AppPage, Category, Skill, SkillSource, SourceScanStatus, SourceScanSummary, StatsData } from './types';
+import { buildSceneRecommendationResult } from './recommendation';
+import recommendationScenesData from './data/recommendation-scenes.json';
+import skillRegistrySeedData from './data/skill-registry.seed.json';
+import { AppPage, Category, RecommendationScene, SceneRecommendationResult, SeedSkillRegistry, Skill, SkillSource, SourceScanStatus, SourceScanSummary, StatsData } from './types';
 import { formatRelativeTime, inferSkillSource } from './utils';
 
 type FilterCategory = Category | 'All';
@@ -75,6 +79,8 @@ interface LocalImportScanResult {
 
 type ImportUiState = 'idle' | 'success' | 'failed';
 const MAX_IMPORTED_RAW_CONTENT = 20_000;
+const RECOMMENDATION_SCENES = recommendationScenesData.scenes as RecommendationScene[];
+const SKILL_REGISTRY_SEED = skillRegistrySeedData as SeedSkillRegistry;
 
 function maskPathForDisplay(input: string): string {
   const isPosixStyle = input.startsWith('/') || input.startsWith('~/') || input.startsWith('<workspace>/');
@@ -264,6 +270,7 @@ function buildFallbackSourceSummary(): SourceScanSummary {
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<AppPage>('skills');
+  const [selectedSceneId, setSelectedSceneId] = useState(RECOMMENDATION_SCENES[0]?.scene_id ?? '');
   const [skills, setSkills] = useState<Skill[]>([]);
   const [statsData, setStatsData] = useState<StatsData | null>(null);
   const [sourceScanSummary, setSourceScanSummary] = useState<SourceScanSummary | null>(null);
@@ -324,6 +331,16 @@ export default function App() {
       return matchesCategory && matchesSource && matchesQuery;
     });
   }, [searchQuery, selectedCategory, selectedSource, skills]);
+
+  const selectedScene = useMemo(
+    () => RECOMMENDATION_SCENES.find(scene => scene.scene_id === selectedSceneId) ?? RECOMMENDATION_SCENES[0],
+    [selectedSceneId],
+  );
+
+  const recommendationResult = useMemo<SceneRecommendationResult | null>(() => {
+    if (!selectedScene) return null;
+    return buildSceneRecommendationResult(selectedScene, SKILL_REGISTRY_SEED.skills, skills);
+  }, [selectedScene, skills]);
 
   const selectedSkill = skills.find(skill => skill.id === selectedSkillId) ?? null;
 
@@ -469,6 +486,9 @@ export default function App() {
                 <SkillLibraryPage
                   skills={skills}
                   filteredSkills={filteredSkills}
+                  scenes={RECOMMENDATION_SCENES}
+                  selectedSceneId={selectedSceneId}
+                  recommendationResult={recommendationResult}
                   statsData={statsData}
                   searchQuery={searchQuery}
                   selectedCategory={selectedCategory}
@@ -483,6 +503,7 @@ export default function App() {
                     setSelectedSkillId(null);
                     setAutoEditSkillId(null);
                   }}
+                  onSceneChange={sceneId => setSelectedSceneId(sceneId)}
                   onSourceChange={source => {
                     setSelectedSource(source);
                     setSelectedSkillId(null);
@@ -550,6 +571,9 @@ export default function App() {
 function SkillLibraryPage({
   skills,
   filteredSkills,
+  scenes,
+  selectedSceneId,
+  recommendationResult,
   statsData,
   searchQuery,
   selectedCategory,
@@ -560,6 +584,7 @@ function SkillLibraryPage({
   localizeFeedback,
   dashboardLoadError,
   onCategoryChange,
+  onSceneChange,
   onSourceChange,
   onSkillSelect,
   onClearSelection,
@@ -581,6 +606,9 @@ function SkillLibraryPage({
 }: {
   skills: Skill[];
   filteredSkills: Skill[];
+  scenes: RecommendationScene[];
+  selectedSceneId: string;
+  recommendationResult: SceneRecommendationResult | null;
   statsData: StatsData | null;
   searchQuery: string;
   selectedCategory: FilterCategory;
@@ -591,6 +619,7 @@ function SkillLibraryPage({
   localizeFeedback: string | null;
   dashboardLoadError: string | null;
   onCategoryChange: (cat: FilterCategory) => void;
+  onSceneChange: (sceneId: string) => void;
   onSourceChange: (source: SourceFilter) => void;
   onSkillSelect: (id: string) => void;
   onClearSelection: () => void;
@@ -615,10 +644,24 @@ function SkillLibraryPage({
 
   return (
     <div className="px-4 py-6 sm:px-6 sm:py-8">
+      {recommendationResult && (
+        <RecommendationHome
+          scenes={scenes}
+          selectedSceneId={selectedSceneId}
+          result={recommendationResult}
+          detectedSkillCount={skills.length}
+          onSceneChange={onSceneChange}
+          onRecommendationClick={skillId => {
+            if (!skillId) return;
+            onSkillSelect(skillId);
+          }}
+        />
+      )}
+
       <motion.section
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8 rounded-[28px] border border-outline-subtle bg-surface-card/80 p-5 sm:p-7"
+        className="mb-8 rounded-[24px] border border-outline-subtle bg-surface-card/60 p-5 sm:p-6"
       >
         <div className="w-full">
           <p className="text-[11px] uppercase tracking-[0.18em] text-primary mb-3">你的能力总览</p>
