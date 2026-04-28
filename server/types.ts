@@ -23,6 +23,7 @@ export interface ScanContext {
   fallbackScanRoots: string[];
   metadataFilePath: string;
   importedSkillsFilePath: string;
+  eventsFilePath: string;
 }
 
 export interface ImportedSkillsFile {
@@ -33,4 +34,23 @@ export interface ImportedSkillsFile {
 
 export interface ParsedSkillFile extends Skill {
   relativeKey: string;
+}
+
+export type DashboardEventType =
+  | 'home_recommendation_view'
+  | 'scene_selected'
+  | 'recommendation_clicked'
+  | 'skill_detail_opened'
+  | 'prompt_recommendation_requested'
+  | 'prompt_recommendation_returned'
+  | 'prompt_recommendation_clicked'
+  | 'prompt_recommendation_fallback';
+
+export interface DashboardEvent {
+  id: string;
+  type: DashboardEventType;
+  createdAt: string;
+  sceneId?: string;
+  recommendedSkillId?: string;
+  matchedSkillId?: string | null;
 }

@@ -1,90 +1,84 @@
 {
-  "version": 1,
-  "updatedAt": "2026-04-27T00:00:00.000Z",
+  "version": 2,
+  "updatedAt": "2026-04-28T00:00:00.000Z",
   "scenes": [
     {
-      "scene_id": "write-prd",
-      "label": "写 PRD",
-      "description": "整理需求、定义功能边界、收敛 MVP",
-      "priority": 1,
-      "query": {
-        "categories": ["产品设计"],
-        "tags": ["prd", "需求分析", "头脑风暴", "spec"],
-        "keywords": ["PRD", "需求", "产品定义", "spec"]
-      },
-      "reason_template": "当前任务偏需求定义与方案收敛，优先推荐 PRD、分析和 brainstorming 相关 skill。"
-    },
-    {
       "scene_id": "product-analysis",
-      "label": "做产品分析",
-      "description": "整理问题、做竞品分析、拆解产品逻辑",
-      "priority": 2,
+      "label": "产品分析与问题定义",
+      "description": "产品调研、头脑风暴、需求拆解与可行性判断",
+      "priority": 1,
+      "is_primary": true,
       "query": {
         "categories": ["产品设计", "数据分析"],
-        "tags": ["需求分析", "头脑风暴", "review", "analysis"],
-        "keywords": ["分析", "竞品", "需求", "review"]
+        "tags": ["需求分析", "头脑风暴", "research", "analysis", "review"],
+        "keywords": ["调研", "分析", "需求", "竞品", "brainstorm"]
       },
-      "reason_template": "当前任务偏问题定义和分析拆解，优先推荐分析、评审和 brainstorming 相关 skill。"
+      "reason_template": "当前任务偏问题定义与方向判断，优先推荐分析、调研和头脑风暴相关 skill。"
     },
     {
       "scene_id": "build-frontend-page",
-      "label": "做前端页面",
-      "description": "生成页面、设计界面、整理前端表达",
-      "priority": 3,
+      "label": "前端实现与界面生成",
+      "description": "页面搭建、组件实现、交互与视觉落地",
+      "priority": 2,
+      "is_primary": true,
       "query": {
         "categories": ["编程开发", "产品设计"],
-        "tags": ["前端", "frontend-design", "HTML", "CSS", "React", "设计"],
-        "keywords": ["前端", "页面", "frontend", "html", "react"]
+        "tags": ["前端", "frontend-design", "React", "HTML", "CSS", "UI"],
+        "keywords": ["前端", "页面", "组件", "react", "ui", "css"]
       },
-      "reason_template": "当前任务偏页面实现与视觉表达，优先推荐前端设计和页面生成相关 skill。"
+      "reason_template": "当前任务偏前端实现与界面表达，优先推荐页面生成、前端设计和实现类 skill。"
     },
     {
-      "scene_id": "build-portfolio-page",
-      "label": "做产品作品集",
-      "description": "把项目内容整理成可展示、可讲述的页面",
-      "priority": 4,
-      "query": {
-        "categories": ["产品设计", "内容创作"],
-        "tags": ["作品集", "portfolio", "HTML", "页面生成", "产品表达"],
-        "keywords": ["作品集", "portfolio", "页面", "项目表达"]
-      },
-      "reason_template": "当前任务偏产品表达与页面包装，优先推荐作品集和页面生成相关 skill。"
-    },
-    {
-      "scene_id": "open-official-docs",
-      "label": "查官方文档",
-      "description": "快速定位 API、平台说明和官方资料",
-      "priority": 5,
-      "query": {
-        "categories": ["编程开发", "内容创作"],
-        "tags": ["文档", "docs", "API", "openai-docs", "browser"],
-        "keywords": ["文档", "api", "docs", "官方"]
-      },
-      "reason_template": "当前任务偏资料查询与官方说明定位，优先推荐文档检索、浏览器和 API 相关 skill。"
-    },
-    {
-      "scene_id": "read-codebase",
-      "label": "读代码 / 理解仓库",
-      "description": "理解仓库结构、阅读逻辑、辅助调试",
-      "priority": 6,
+      "scene_id": "dev-debug-test",
+      "label": "开发调试与质量验证",
+      "description": "代码理解、报错排查、测试验证与优化",
+      "priority": 3,
+      "is_primary": true,
       "query": {
         "categories": ["编程开发"],
-        "tags": ["browser", "playwright", "api", "plugin", "code"],
-        "keywords": ["代码", "仓库", "debug", "plugin", "browser"]
+        "tags": ["playwright", "testing", "debug", "review", "code"],
+        "keywords": ["调试", "测试", "报错", "代码", "review", "debug"]
       },
-      "reason_template": "当前任务偏代码理解与仓库阅读，优先推荐浏览器、插件和开发辅助相关 skill。"
+      "reason_template": "当前任务偏调试与稳定性验证，优先推荐测试、代码阅读和排障相关 skill。"
     },
     {
-      "scene_id": "organize-skills",
-      "label": "整理技能资产",
-      "description": "梳理本地 skill、整理路线、补充元信息",
-      "priority": 7,
+      "scene_id": "paper-research",
+      "label": "科研论文检索与转化",
+      "description": "找最新论文、筛选方法并转成可执行项目思路",
+      "priority": 4,
+      "is_primary": true,
       "query": {
-        "categories": ["效率流程", "内容创作", "产品设计"],
-        "tags": ["路线图", "workflow", "sync", "Markdown", "整理"],
-        "keywords": ["整理", "roadmap", "workflow", "sync", "markdown"]
+        "categories": ["内容创作", "数据分析", "产品设计"],
+        "tags": ["paper", "research", "roadmap", "project", "tech-note"],
+        "keywords": ["论文", "paper", "research", "arxiv", "项目转化"]
       },
-      "reason_template": "当前任务偏整理与结构化管理，优先推荐路线图、流程和文档整理相关 skill。"
+      "reason_template": "当前任务偏科研检索与方法转化，优先推荐论文筛选、路线图与项目化相关 skill。"
+    },
+    {
+      "scene_id": "ai-trend-tracking",
+      "label": "AI 趋势与热点追踪",
+      "description": "跟踪 AI 最新趋势、推特热点与观点变化",
+      "priority": 5,
+      "is_primary": true,
+      "query": {
+        "categories": ["内容创作", "商业营销", "数据分析"],
+        "tags": ["trend", "twitter", "x", "news", "research"],
+        "keywords": ["趋势", "热点", "twitter", "x", "最新", "news"]
+      },
+      "reason_template": "当前任务偏趋势追踪与信息捕捉，优先推荐检索、整理与观点输出相关 skill。"
+    },
+    {
+      "scene_id": "prd-solution-design",
+      "label": "方案设计与 PRD 产出",
+      "description": "功能定义、方案收敛、PRD 文档沉淀",
+      "priority": 6,
+      "is_primary": false,
+      "query": {
+        "categories": ["产品设计", "内容创作"],
+        "tags": ["prd", "spec", "workflow", "roadmap", "doc"],
+        "keywords": ["PRD", "spec", "方案", "文档", "需求定义"]
+      },
+      "reason_template": "当前任务偏方案收敛与文档产出，优先推荐 PRD、文档与流程类 skill。"
     }
   ]
 }

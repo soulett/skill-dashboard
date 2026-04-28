@@ -2,11 +2,24 @@ import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
 import { scanContext } from './config';
-import { analyzeSkillEcosystemWithAI, extractSkillMetadataWithAI, suggestFieldFixesWithAI, suggestPathHelpWithAI } from './ai-service';
+import { analyzeSkillEcosystemWithAI, extractSkillMetadataWithAI, recommendByPromptWithAI, suggestFieldFixesWithAI, suggestPathHelpWithAI } from './ai-service';
 import { generateChineseMetadata } from './localizer';
 import { ensureMetadataFile } from './metadata-store';
 import { scanSkillRoots } from './skill-scanner';
-import { getMergedSkills, getRawSkill, getRawSkills, getSourceScanSummary, getStats, importSkills, triggerScan, updateSkillMetadata } from './skill-service';
+import {
+  getMergedSkills,
+  getSourceScanSummary,
+  getRawSkill,
+  getRawSkills,
+  getStats,
+  importSkills,
+  importSourceFromDefaultRoots,
+  importSourceFromManualPath,
+  triggerScan,
+  updateSkillMetadata,
+} from './skill-service';
+import { appendDashboardEvent, getDashboardEventSummary } from './event-service';
+import type { DashboardEventType } from './types';
 
 const app = express();
 
@@ -16,10 +29,24 @@ app.use(
     corsOrigin
       ? {
           origin: corsOrigin.split(',').map(item => item.trim()).filter(Boolean),
+          methods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
+          allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-token'],
         }
-      : undefined,
+      : {
+          origin: true,
+          methods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
+          allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-token'],
+        },
   ),
 );
+app.use((_req, res, next) => {
+  // For Chrome Private Network Access preflight compatibility in local dev.
+  res.header('Access-Control-Allow-Private-Network', 'true');
+  next();
+});
+app.options('*', (_req, res) => {
+  res.sendStatus(204);
+});
 app.use(express.json({ limit: '12mb' }));
 
 app.get('/api/health', (_req, res) => {
@@ -51,6 +78,51 @@ app.get('/api/source-scan-summary', async (_req, res) => {
   res.json({ success: true, data: summary });
 });
 
+app.get('/api/events/summary', async (_req, res) => {
+  const adminToken = process.env.EVENTS_ADMIN_TOKEN?.trim();
+  const requestToken = String(_req.header('x-admin-token') ?? '');
+  if (!adminToken || requestToken !== adminToken) {
+    res.status(404).json({ success: false, error: 'Not found' });
+    return;
+  }
+  const summary = await getDashboardEventSummary(scanContext);
+  res.json({ success: true, data: summary });
+});
+
+app.post('/api/events', async (req, res) => {
+  const type = req.body?.type as DashboardEventType | undefined;
+  const allowed: DashboardEventType[] = [
+    'home_recommendation_view',
+    'scene_selected',
+    'recommendation_clicked',
+    'skill_detail_opened',
+    'prompt_recommendation_requested',
+    'prompt_recommendation_returned',
+    'prompt_recommendation_clicked',
+    'prompt_recommendation_fallback',
+  ];
+  if (!type || !allowed.includes(type)) {
+    res.status(400).json({ success: false, error: 'Invalid event type' });
+    return;
+  }
+
+  try {
+    const event = await appendDashboardEvent(scanContext, {
+      type,
+      sceneId: typeof req.body?.sceneId === 'string' ? req.body.sceneId : undefined,
+      recommendedSkillId: typeof req.body?.recommendedSkillId === 'string' ? req.body.recommendedSkillId : undefined,
+      matchedSkillId:
+        typeof req.body?.matchedSkillId === 'string' || req.body?.matchedSkillId === null ? req.body.matchedSkillId : undefined,
+    });
+    res.json({ success: true, data: event });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to append event',
+    });
+  }
+});
+
 app.post('/api/scan', async (_req, res) => {
   const result = await triggerScan(scanContext);
   res.json({ success: true, data: result });
@@ -65,6 +137,43 @@ app.post('/api/import-skills', async (req, res) => {
 
   const result = await importSkills(scanContext, skills);
   res.json({ success: true, data: result });
+});
+
+app.post('/api/import-source', async (req, res) => {
+  const source = req.body?.source;
+  if (source !== 'codex' && source !== 'cursor' && source !== 'claude') {
+    res.status(400).json({ success: false, error: 'Invalid request body: source is required' });
+    return;
+  }
+
+  try {
+    const result = await importSourceFromDefaultRoots(scanContext, source);
+    res.json({ success: true, data: result });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error instanceof Error ? error.message : '默认路径导入失败，请稍后重试。',
+    });
+  }
+});
+
+app.post('/api/import-source-path', async (req, res) => {
+  const source = req.body?.source;
+  const inputPath = req.body?.path;
+  if ((source !== 'codex' && source !== 'cursor' && source !== 'claude') || typeof inputPath !== 'string') {
+    res.status(400).json({ success: false, error: 'Invalid request body: source and path are required' });
+    return;
+  }
+
+  try {
+    const result = await importSourceFromManualPath(scanContext, source, inputPath);
+    res.json({ success: true, data: result });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error instanceof Error ? error.message : '手动路径导入失败，请检查路径后重试。',
+    });
+  }
 });
 
 app.patch('/api/skills/:id/metadata', async (req, res) => {
@@ -207,6 +316,24 @@ app.post('/api/ai/analyze-ecosystem', async (req, res) => {
     res.json({ success: true, data: result });
   } catch {
     res.status(500).json({ success: false, error: 'Failed to analyze ecosystem' });
+  }
+});
+
+app.post('/api/recommendation/prompt', async (req, res) => {
+  try {
+    const prompt = typeof req.body?.prompt === 'string' ? req.body.prompt.trim() : '';
+    const topKRaw = Number(req.body?.topK ?? 5);
+    const topK = Number.isFinite(topKRaw) ? Math.max(1, Math.min(topKRaw, 10)) : 5;
+    if (!prompt) {
+      res.status(400).json({ success: false, error: 'Invalid request body: prompt is required' });
+      return;
+    }
+
+    const skills = await getMergedSkills(scanContext);
+    const result = await recommendByPromptWithAI({ prompt, topK, skills });
+    res.json({ success: true, data: result });
+  } catch {
+    res.status(500).json({ success: false, error: 'Failed to generate prompt recommendation' });
   }
 });
 

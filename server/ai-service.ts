@@ -1,3 +1,5 @@
+import type { RecommendationCardItem, Skill } from '../src/types';
+
 interface SuggestFieldFixesInput {
   skillTitle: string;
   rawContent: string;
@@ -85,9 +87,15 @@ const TAG_TRANSLATION: Record<string, string> = {
 };
 
 function getEnvConfig() {
-  const apiKey = process.env.SILICONFLOW_API_KEY?.trim();
-  const baseUrl = (process.env.SILICONFLOW_BASE_URL?.trim() || 'https://api.siliconflow.cn/v1').replace(/\/+$/, '');
-  const model = process.env.AI_MODEL?.trim() || process.env.SILICONFLOW_MODEL?.trim() || 'Pro/zai-org/GLM-5.1';
+  const provider = process.env.AI_PROVIDER?.trim().toLowerCase();
+  const apiKey = process.env.AI_API_KEY?.trim() || process.env.SILICONFLOW_API_KEY?.trim();
+  const defaultBaseUrl = provider === 'deepseek' ? 'https://api.deepseek.com' : 'https://api.siliconflow.cn/v1';
+  const baseUrl = (process.env.AI_BASE_URL?.trim() || process.env.SILICONFLOW_BASE_URL?.trim() || defaultBaseUrl).replace(/\/+$/, '');
+  const model =
+    process.env.AI_MODEL_PRIMARY?.trim() ||
+    process.env.AI_MODEL?.trim() ||
+    process.env.SILICONFLOW_MODEL?.trim() ||
+    (provider === 'deepseek' ? 'deepseek-chat' : 'Pro/zai-org/GLM-5.1');
   return { apiKey, baseUrl, model };
 }
 
@@ -620,4 +628,410 @@ export async function analyzeSkillEcosystemWithAI(input: {
   if (result.suggestions.length === 0) result.suggestions = fallback.suggestions;
 
   return result;
+}
+
+interface PromptRecommendInput {
+  prompt: string;
+  topK?: number;
+  skills: Skill[];
+}
+
+interface PromptRecommendResult {
+  items: RecommendationCardItem[];
+  fallbackUsed: boolean;
+}
+
+const NARRATIVE_ROLES: Array<'start' | 'detail' | 'collab' | 'qa' | 'delivery'> = ['start', 'detail', 'collab', 'qa', 'delivery'];
+
+function tokenizePrompt(value: string): string[] {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[`"'.,/\\()[\]{}:+*?!]/g, ' ')
+    .trim();
+
+  const parts = normalized.match(/[\p{Script=Han}]+|[a-z0-9_-]+/gu) ?? [];
+  const tokens: string[] = [];
+
+  for (const part of parts) {
+    const item = part.trim();
+    if (!item) continue;
+    if (/^[a-z0-9_-]+$/.test(item)) {
+      if (item.length >= 2) tokens.push(item);
+      continue;
+    }
+    // For Chinese, keep the whole phrase and add 2-char grams for better matching.
+    if (item.length >= 2) tokens.push(item);
+    for (let i = 0; i < item.length - 1; i += 1) {
+      tokens.push(item.slice(i, i + 2));
+    }
+  }
+
+  return [...new Set(tokens)];
+}
+
+function inferSourceMeta(sourcePath: string): { sourceLabel: string; sourceClassName: string } {
+  const normalized = sourcePath.toLowerCase().replaceAll('\\', '/');
+  if (normalized.includes('/.codex/') || normalized.startsWith('local://codex/')) {
+    return { sourceLabel: 'Codex', sourceClassName: 'bg-primary/12 text-primary border-primary/30' };
+  }
+  if (normalized.includes('/.cursor/') || normalized.startsWith('local://cursor/')) {
+    return { sourceLabel: 'Cursor', sourceClassName: 'bg-info/12 text-info border-info/30' };
+  }
+  if (normalized.includes('/.claude/') || normalized.startsWith('local://claude/')) {
+    return { sourceLabel: 'Claude', sourceClassName: 'bg-warning/12 text-warning border-warning/30' };
+  }
+  return { sourceLabel: 'Other', sourceClassName: 'bg-surface-bright text-on-surface-muted border-outline-subtle' };
+}
+
+function inferHealthMeta(skill: Skill): { healthLabel: string; healthClassName: string } {
+  if (skill.status === 'active') return { healthLabel: '信息完整', healthClassName: 'bg-success/12 text-success border-success/30' };
+  if (skill.status === 'updating') return { healthLabel: '更新中', healthClassName: 'bg-warning/12 text-warning border-warning/30' };
+  return { healthLabel: '待补充', healthClassName: 'bg-warning/12 text-warning border-warning/30' };
+}
+
+function buildRuleReasonBlocksForPrompt(skill: Skill, prompt: string): [string, string, string] {
+  const firstTag = skill.tags[0] ?? '当前任务';
+  const title = skill.title || '这条 skill';
+  const category = skill.category || '通用';
+  const whenToUse = skill.details.whenToUse?.[0] ?? '';
+  const hint = [title, category, ...skill.tags, whenToUse].join(' ').toLowerCase();
+
+  let firstLine = `你想做“${prompt}”，${title}能先帮你把第一步搭起来，避免空白开局。`;
+  if (hint.includes('prd') || hint.includes('产品') || hint.includes('需求')) {
+    firstLine = `你想做“${prompt}”，${title}会先帮你搭好文档骨架，把需求说清楚再往下推进。`;
+  } else if (hint.includes('分析') || hint.includes('research') || hint.includes('调研')) {
+    firstLine = `你想做“${prompt}”，${title}更适合先把问题和目标拆开，避免一上来就写偏。`;
+  } else if (hint.includes('前端') || hint.includes('ui') || hint.includes('react') || hint.includes('界面')) {
+    firstLine = `你想做“${prompt}”，${title}可以先落到页面结构和关键交互，方便你快速出第一版。`;
+  } else if (hint.includes('测试') || hint.includes('质量') || hint.includes('debug')) {
+    firstLine = `你想做“${prompt}”，${title}会先帮你把风险点和检查步骤拉出来，减少后面返工。`;
+  } else if (hint.includes('协作') || hint.includes('评审') || hint.includes('共创')) {
+    firstLine = `你想做“${prompt}”，${title}先把协作流程对齐，避免多人理解不一致。`;
+  }
+
+  return [
+    firstLine,
+    `这条 skill 是针对“${firstTag}”情景设计的，和你要做的事在核心步骤上匹配度很高。`,
+    `如果你的目标更偏离“${firstTag}”，建议再搭配 1-2 条相邻 skill 一起用。`,
+  ];
+}
+
+function scoreSkillByPrompt(skill: Skill, promptTokens: string[]): number {
+  if (promptTokens.length === 0) return 0;
+  const haystack = [
+    skill.title,
+    skill.description,
+    skill.category,
+    ...skill.tags,
+    ...(skill.details.whenToUse ?? []),
+    ...(skill.details.triggerWords ?? []),
+  ]
+    .join(' ')
+    .toLowerCase();
+
+  let score = 0;
+  for (const token of promptTokens) {
+    if (haystack.includes(token)) score += token.length >= 4 ? 5 : 3;
+  }
+  const titleLower = skill.title.toLowerCase();
+  for (const token of promptTokens) {
+    if (titleLower.includes(token)) score += 4;
+  }
+  if (skill.status === 'active') score += 1;
+  return score;
+}
+
+async function callSiliconFlowModel(
+  baseUrl: string,
+  apiKey: string,
+  model: string,
+  timeoutMs: number,
+  messages: Array<{ role: 'system' | 'user'; content: string }>,
+): Promise<string | null> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(`${baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model,
+        temperature: 0.2,
+        max_tokens: 700,
+        response_format: { type: 'json_object' },
+        messages,
+      }),
+    });
+    if (!response.ok) return null;
+    const data = (await response.json()) as SiliconFlowResponse;
+    return data.choices?.[0]?.message?.content?.trim() ?? null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function getPromptAiConfig() {
+  const provider = process.env.AI_PROVIDER?.trim().toLowerCase();
+  const apiKey = process.env.AI_API_KEY?.trim() || process.env.SILICONFLOW_API_KEY?.trim() || '';
+  const defaultBaseUrl = provider === 'deepseek' ? 'https://api.deepseek.com' : 'https://api.siliconflow.cn/v1';
+  const baseUrl = (process.env.AI_BASE_URL?.trim() || process.env.SILICONFLOW_BASE_URL?.trim() || defaultBaseUrl).replace(/\/+$/, '');
+  const defaultModel = provider === 'deepseek' ? 'deepseek-v4-flash' : 'Pro/zai-org/GLM-5.1';
+  const modelPrimary = process.env.AI_MODEL_PRIMARY?.trim() || process.env.AI_MODEL?.trim() || process.env.SILICONFLOW_MODEL?.trim() || defaultModel;
+  let modelFallback = process.env.AI_MODEL_FALLBACK?.trim() || modelPrimary;
+  // DeepSeek path: single-model first for stability and latency (avoid serial timeout compounding).
+  if (provider === 'deepseek') modelFallback = modelPrimary;
+  const timeoutMsRaw = Number(process.env.AI_TIMEOUT_MS ?? 2000);
+  const timeoutMs = Number.isFinite(timeoutMsRaw) ? Math.max(timeoutMsRaw, 800) : 2000;
+  const timeoutFloor = 800;
+  return { provider, apiKey, baseUrl, modelPrimary, modelFallback, timeoutMs: Math.max(timeoutMs, timeoutFloor) };
+}
+
+function extractIdsFromLooseText(
+  text: string,
+  allowedIds: Set<string>,
+  titleToId?: Map<string, string>,
+): string[] {
+  const found: string[] = [];
+  for (const id of allowedIds) {
+    if (text.includes(id)) found.push(id);
+  }
+  if (found.length > 0) return found;
+
+  const lines = text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+  const candidates: string[] = [];
+  for (const line of lines) {
+    const cleaned = line.replace(/^[-*+\d.)\s]+/, '').trim();
+    if (allowedIds.has(cleaned)) candidates.push(cleaned);
+    if (titleToId) {
+      const mapped = titleToId.get(cleaned.toLowerCase());
+      if (mapped) candidates.push(mapped);
+    }
+  }
+  return [...new Set(candidates)];
+}
+
+function resolveCandidateId(
+  rawId: string,
+  rawTitle: string,
+  allowedIds: Set<string>,
+  titleToId: Map<string, string>,
+): string {
+  const id = rawId.trim();
+  if (id && allowedIds.has(id)) return id;
+
+  if (id) {
+    for (const candidateId of allowedIds) {
+      if (candidateId.includes(id) || id.includes(candidateId)) return candidateId;
+    }
+  }
+
+  const title = rawTitle.trim().toLowerCase();
+  if (title) {
+    const exact = titleToId.get(title);
+    if (exact && allowedIds.has(exact)) return exact;
+    for (const [knownTitle, candidateId] of titleToId.entries()) {
+      if (knownTitle.includes(title) || title.includes(knownTitle)) {
+        if (allowedIds.has(candidateId)) return candidateId;
+      }
+    }
+  }
+
+  return '';
+}
+
+function toRecommendationCardFromSkill(skill: Skill, prompt: string): RecommendationCardItem {
+  const sourceMeta = inferSourceMeta(skill.sourcePath);
+  const healthMeta = inferHealthMeta(skill);
+  const reasonBlocks = buildRuleReasonBlocksForPrompt(skill, prompt);
+  return {
+    id: skill.id,
+    title: skill.title,
+    description: skill.description,
+    recommendationReason: reasonBlocks.join(' '),
+    evidenceLabel: '规则匹配 + AI增强',
+    reasonBlocks,
+    sourceLabel: sourceMeta.sourceLabel,
+    sourceClassName: sourceMeta.sourceClassName,
+    healthLabel: healthMeta.healthLabel,
+    healthClassName: healthMeta.healthClassName,
+    tags: skill.tags.slice(0, 3),
+    matchedSkillId: skill.id,
+  };
+}
+
+function roleLine(role: (typeof NARRATIVE_ROLES)[number], prompt: string, title: string): string {
+  if (role === 'start') return `你想做“${prompt}”，${title}适合先把骨架搭起来，让任务快速起步。`;
+  if (role === 'detail') return `围绕“${prompt}”，${title}更适合补齐关键细节，避免中途返工。`;
+  if (role === 'collab') return `如果“${prompt}”涉及多人协作，${title}更适合先拉齐理解和分工。`;
+  if (role === 'qa') return `针对“${prompt}”，${title}这条更偏检查与校正，能提前发现风险点。`;
+  return `当“${prompt}”进入落地阶段，${title}更适合推动结果输出与交付。`;
+}
+
+function rewriteForDistinctNarrative(
+  items: RecommendationCardItem[],
+  prompt: string,
+): RecommendationCardItem[] {
+  return items.map((item, index) => {
+    const role = NARRATIVE_ROLES[index % NARRATIVE_ROLES.length];
+    const tag = item.tags[0] ?? '当前任务';
+    const line1 = roleLine(role, prompt, item.title);
+    const line2 = `这条 skill 是针对“${tag}”情景设计的，和你当前需求在关键步骤上匹配度较高。`;
+    const line3 =
+      role === 'delivery'
+        ? `建议在前置信息明确后再重点使用它，这样输出会更稳定。`
+        : `如果后续目标变化，建议搭配一条相邻类型 skill 一起用。`;
+    const reasonBlocks: [string, string, string] = [line1, line2, line3];
+    return {
+      ...item,
+      reasonBlocks,
+      recommendationReason: reasonBlocks.join(' '),
+    };
+  });
+}
+
+export async function recommendByPromptWithAI(input: PromptRecommendInput): Promise<PromptRecommendResult> {
+  const prompt = input.prompt.trim();
+  const topK = Math.max(1, Math.min(input.topK ?? 5, 10));
+  const promptTokens = tokenizePrompt(prompt);
+  const rankedSkills = [...input.skills]
+    .map(skill => ({ skill, score: scoreSkillByPrompt(skill, promptTokens) }))
+    .sort((a, b) => b.score - a.score)
+    .filter(item => item.score > 0);
+
+  const pool = (rankedSkills.length > 0 ? rankedSkills : input.skills.map(skill => ({ skill, score: 0 }))).slice(0, 12);
+  const ruleTop = pool.slice(0, topK).map(item => toRecommendationCardFromSkill(item.skill, prompt));
+  if (ruleTop.length === 0) {
+    console.warn('[prompt-reco] fallback: no rule candidates');
+    return { items: [], fallbackUsed: true };
+  }
+
+  const { provider, apiKey, baseUrl, modelPrimary, modelFallback, timeoutMs } = getPromptAiConfig();
+  if (!apiKey) {
+    console.warn('[prompt-reco] fallback: missing AI_API_KEY/SILICONFLOW_API_KEY');
+    return { items: rewriteForDistinctNarrative(ruleTop, prompt), fallbackUsed: true };
+  }
+
+  const candidatePayload = pool.map(item => ({
+    id: item.skill.id,
+    title: item.skill.title,
+    description: item.skill.description.slice(0, 120),
+    category: item.skill.category,
+    tags: item.skill.tags.slice(0, 6),
+    score: item.score,
+  }));
+
+  const messages: Array<{ role: 'system' | 'user'; content: string }> = [
+    {
+      role: 'system',
+      content:
+        '你是本地 skill 推荐解释器。目标：让每条推荐理由有明显差异，避免同类 skill 说法雷同。' +
+        '你只能在候选池中重排，不能返回池外 ID。' +
+        '你必须只输出 JSON（无 markdown、无解释）：{"items":[{"id":"...","title":"...","reasonBlocks":["...","...","..."]}]}' +
+        '写作硬约束：' +
+        '1) reasonBlocks[0] 必须不同句式，不得复用同一开头；' +
+        '2) reasonBlocks[0] 必须覆盖不同任务切面（起步/细化/协作/验证/交付），同批不重复；' +
+        '3) reasonBlocks[1] 必须引用该 skill 的两个不同信息点，并写成“它更适合【A】场景，尤其在【B】这一步更有优势”；' +
+        '4) 同批 5 条里，reasonBlocks[1] 禁止复用相同 A/B 组合；' +
+        '5) reasonBlocks[2] 必须给不同的边界或搭配建议，不能都写“建议搭配其他 skill”；' +
+        '6) 若无法保证差异度，宁可减少条数，也不要输出重复话术。' +
+        '语言要求：面向非技术用户，口语化，不术语堆叠。',
+    },
+    {
+      role: 'user',
+      content:
+        `用户任务：${prompt}\n候选池：${JSON.stringify(candidatePayload)}\n` +
+        `请返回前 ${topK} 个最合适的 id，每条给三段理由 reasonBlocks（为什么推荐/为什么适配/使用边界）。` +
+        'id 必须来自候选池的 id 字段，不要编造。' +
+        '每条必须包含 id、title、reasonBlocks。' +
+        '示例输出：{"items":[{"id":"candidate-id-1","title":"候选标题","reasonBlocks":["你想做“产品prd”，这条先帮你搭文档骨架。","它更适合需求梳理场景，尤其在目标定义这一步更有优势。","进入评审阶段后，建议换协作类 skill。"]}]}',
+    },
+  ];
+
+  const primaryContent = await callSiliconFlowModel(baseUrl, apiKey, modelPrimary, timeoutMs, messages);
+  const shouldTryFallbackModel =
+    !primaryContent &&
+    modelFallback &&
+    modelFallback !== modelPrimary &&
+    !(provider === 'deepseek' && modelPrimary.includes('flash'));
+  const aiContent = primaryContent || (shouldTryFallbackModel ? await callSiliconFlowModel(baseUrl, apiKey, modelFallback, timeoutMs, messages) : null);
+
+  if (!aiContent) {
+    console.warn('[prompt-reco] fallback: model call failed/timeout', {
+      modelPrimary,
+      modelFallback,
+      timeoutMs,
+    });
+    return { items: rewriteForDistinctNarrative(ruleTop, prompt), fallbackUsed: true };
+  }
+  const parsed = tryParseJson(aiContent) as { items?: Array<{ id?: string; reasonBlocks?: string[] }> } | null;
+  const allowedIds = new Set(pool.map(item => item.skill.id));
+  const byId = new Map(ruleTop.map(item => [item.id, item]));
+  const titleToId = new Map<string, string>();
+  for (const item of pool) {
+    titleToId.set(item.skill.title.trim().toLowerCase(), item.skill.id);
+  }
+  const enhanced: RecommendationCardItem[] = [];
+  if (parsed && Array.isArray(parsed.items)) {
+    for (const [index, item] of parsed.items.entries()) {
+      const idFromItem = typeof item?.id === 'string' ? item.id : '';
+      const titleFromItem = typeof (item as any)?.title === 'string' ? String((item as any).title) : '';
+      let id = resolveCandidateId(idFromItem, titleFromItem, allowedIds, titleToId);
+      if (!id || !allowedIds.has(id)) {
+        id = ruleTop[index]?.id ?? '';
+      }
+      if (!id || !allowedIds.has(id)) continue;
+      const base = byId.get(id);
+      if (!base) continue;
+      const blocks = Array.isArray(item.reasonBlocks)
+        ? item.reasonBlocks.filter(part => typeof part === 'string').map(part => part.trim()).filter(Boolean).slice(0, 3)
+        : [];
+      const reasonBlocks: [string, string, string] =
+        blocks.length >= 3
+          ? [blocks[0], blocks[1], blocks[2]]
+          : blocks.length === 2
+            ? [blocks[0], blocks[1], base.reasonBlocks[2]]
+            : blocks.length === 1
+              ? [blocks[0], base.reasonBlocks[1], base.reasonBlocks[2]]
+              : base.reasonBlocks;
+      enhanced.push({
+        ...base,
+        reasonBlocks,
+        recommendationReason: reasonBlocks.join(' '),
+      });
+      if (enhanced.length >= topK) break;
+    }
+  } else {
+    const looseIds = extractIdsFromLooseText(aiContent, allowedIds, titleToId).slice(0, topK);
+    for (const id of looseIds) {
+      const base = byId.get(id);
+      if (!base) continue;
+      enhanced.push(base);
+    }
+    if (enhanced.length > 0) {
+      console.warn('[prompt-reco] using loose text id extraction');
+    } else {
+      console.warn('[prompt-reco] fallback: AI response is not valid JSON items[]');
+    }
+  }
+
+  if (enhanced.length === 0) {
+    console.warn('[prompt-reco] fallback: AI returned no valid in-pool ids');
+    // AI did respond, but output was non-compliant; degrade gracefully without showing "AI unavailable".
+    return { items: rewriteForDistinctNarrative(ruleTop, prompt), fallbackUsed: false };
+  }
+
+  const used = new Set(enhanced.map(item => item.id));
+  for (const item of ruleTop) {
+    if (enhanced.length >= topK) break;
+    if (used.has(item.id)) continue;
+    enhanced.push(item);
+  }
+
+  return { items: rewriteForDistinctNarrative(enhanced.slice(0, topK), prompt), fallbackUsed: false };
 }

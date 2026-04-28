@@ -44,6 +44,7 @@ export const scanContext: ScanContext = {
   fallbackScanRoots: [demoSkillsRoot],
   metadataFilePath: path.join(dataDir, 'metadata.json'),
   importedSkillsFilePath: path.join(dataDir, 'imported-skills.json'),
+  eventsFilePath: path.join(dataDir, 'events.sqlite'),
 };
 
 export const SUPPORTED_SKILL_FILES = new Set(['SKILL.md', 'skill.md']);

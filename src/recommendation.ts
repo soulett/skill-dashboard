@@ -1,11 +1,6 @@
 import { getSkillSourceMeta, inferSkillSource } from './utils';
-import type {
-  RecommendationCardItem,
-  RecommendationScene,
-  SceneRecommendationResult,
-  SeedSkillRecord,
-  Skill,
-} from './types';
+import type { RecommendationCardItem, RecommendationScene, SceneRecommendationResult, SeedSkillRecord, Skill } from './types';
+import { buildRuleReasonBlocks } from './recommendation-reason';
 
 function normalizeText(value: string | undefined | null): string {
   return (value ?? '')
@@ -21,6 +16,66 @@ function normalizePath(value: string | undefined | null): string {
 
 function normalizeTokenList(values: string[]): string[] {
   return values.map(item => normalizeText(item)).filter(Boolean);
+}
+
+function prettifyTag(tag: string): string {
+  const trimmed = tag.trim();
+  if (!trimmed) return '';
+
+  const replacements: Record<string, string> = {
+    prd: 'PRD',
+    spec: 'Spec',
+    research: '研究',
+    docs: '文档',
+    api: 'API',
+    html: 'HTML',
+    css: 'CSS',
+    react: 'React',
+    frontend: '前端',
+    'frontend-design': '前端设计',
+    portfolio: '作品集',
+    review: '评审',
+    analysis: '分析',
+    workflow: '流程',
+    roadmap: '路线图',
+  };
+
+  return replacements[trimmed.toLowerCase()] ?? trimmed;
+}
+
+function buildRecommendationReason(seed: SeedSkillRecord): string {
+  const curatedTags = seed.tags_curated.map(prettifyTag).filter(Boolean).slice(0, 2);
+  const fallbackTagReason = curatedTags.length > 0 ? `更贴近当前任务，重点覆盖 ${curatedTags.join(' / ')}。` : '';
+
+  const templates = seed.recommended_reason_templates.map(item => item.trim()).filter(Boolean);
+
+  const specificTemplate =
+    templates.find(item => item.startsWith('标签与当前任务高度相关：')) ??
+    templates.find(item => !item.startsWith('适合当前“') && !item.startsWith('来自本地')) ??
+    templates[0];
+
+  if (!specificTemplate) {
+    return fallbackTagReason || seed.capability_summary;
+  }
+
+  if (specificTemplate.startsWith('标签与当前任务高度相关：')) {
+    const raw = specificTemplate.replace('标签与当前任务高度相关：', '').trim();
+    const parts = raw
+      .split('/')
+      .map(item => prettifyTag(item))
+      .map(item => item.trim())
+      .filter(Boolean)
+      .slice(0, 2);
+    if (parts.length > 0) {
+      return `更贴近当前任务，重点覆盖 ${parts.join(' / ')}。`;
+    }
+  }
+
+  if (specificTemplate.startsWith('适合当前“')) {
+    return fallbackTagReason || `${specificTemplate.replace('适合当前“', '适合当前 ').replace('”场景', ' 场景。')}`;
+  }
+
+  return specificTemplate.endsWith('。') ? specificTemplate : `${specificTemplate}。`;
 }
 
 function getHealthMeta(status: SeedSkillRecord['health_status_basic']) {
@@ -72,11 +127,7 @@ function matchSkill(seed: SeedSkillRecord, skills: Skill[], lookup: ReturnType<t
   const pathMatch = lookup.byPath.get(normalizePath(seed.source_path));
   if (pathMatch) return pathMatch;
 
-  const titleCandidates = [
-    seed.display_title,
-    seed.title_normalized,
-    seed.skill_id.split('/').pop() ?? '',
-  ];
+  const titleCandidates = [seed.display_title, seed.title_normalized, seed.skill_id.split('/').pop() ?? ''];
 
   for (const title of titleCandidates) {
     const titleMatch = lookup.byTitle.get(normalizeText(title));
@@ -138,16 +189,19 @@ function scoreSeedForScene(seed: SeedSkillRecord, scene: RecommendationScene): n
   return score;
 }
 
-function toRecommendationCard(seed: SeedSkillRecord, matchedSkill: Skill | null): RecommendationCardItem {
+function toRecommendationCard(seed: SeedSkillRecord, scene: RecommendationScene, matchedSkill: Skill | null): RecommendationCardItem {
   const source = matchedSkill ? inferSkillSource(matchedSkill.sourcePath) : inferSkillSource(seed.source_path);
   const sourceMeta = getSkillSourceMeta(source);
   const healthMeta = getHealthMeta(seed.health_status_basic);
+  const reasonBlocks = buildRuleReasonBlocks(seed, scene);
 
   return {
     id: seed.skill_id,
     title: seed.display_title || matchedSkill?.title || seed.title_normalized,
     description: matchedSkill?.description || seed.description_short,
-    recommendationReason: seed.recommended_reason_templates[0] ?? seed.capability_summary,
+    recommendationReason: buildRecommendationReason(seed),
+    evidenceLabel: '规则匹配 + AI增强',
+    reasonBlocks,
     sourceLabel: sourceMeta.label,
     sourceClassName: sourceMeta.chipClass,
     healthLabel: healthMeta.label,
@@ -176,7 +230,7 @@ export function buildSceneRecommendationResult(
 
   return {
     scene,
-    items: ranked.map(item => toRecommendationCard(item.seed, item.matchedSkill)),
+    items: ranked.map(item => toRecommendationCard(item.seed, scene, item.matchedSkill)),
     coverage: {
       matchedCount: ranked.filter(item => item.matchedSkill).length,
       incompleteCount: ranked.filter(item => item.seed.health_status_basic !== 'complete').length,

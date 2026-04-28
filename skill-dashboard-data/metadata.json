@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-21T04:37:23.754Z",
+  "updatedAt": "2026-04-27T11:55:48.930Z",
   "skills": {
     ".system/imagegen/SKILL.md": {
       "displayTitle": "图像生成能力",
@@ -29,7 +29,6 @@
       "tags": [
         "openai",
         "api",
-        "research",
         "编程开发"
       ],
       "whenToUse": [
@@ -39,7 +38,7 @@
       ],
       "locale": "zh-CN",
       "translationSource": "auto",
-      "translatedAt": "2026-04-21T04:26:01.512Z"
+      "translatedAt": "2026-04-27T10:33:39.771Z"
     },
     ".system/plugin-creator/SKILL.md": {
       "displayTitle": "插件创建模板",
@@ -778,6 +777,645 @@
       "locale": "zh-CN",
       "translationSource": "auto",
       "translatedAt": "2026-04-21T04:37:23.752Z"
+    },
+    "pm-portfolio-generator/SKILL.md": {
+      "displayTitle": "pm portfolio generator",
+      "displayDescription": "pm portfolio generator用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "pm portfolio generator用于处理产品设计相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "产品设计",
+      "tags": [
+        "react",
+        "git",
+        "github",
+        "产品设计"
+      ],
+      "whenToUse": [
+        "需要处理产品设计类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:39.824Z"
+    },
+    "product-copy-polish/SKILL.md": {
+      "displayTitle": "product copy polish",
+      "displayDescription": "product copy polish用于处理商业营销相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "product copy polish用于处理商业营销相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "商业营销",
+      "tags": [
+        "商业营销"
+      ],
+      "whenToUse": [
+        "需要处理商业营销类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:39.878Z"
+    },
+    "steve-jobs-skill/SKILL.md": {
+      "displayTitle": "steve jobs perspective",
+      "displayDescription": "steve jobs perspective用于处理商业营销相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "steve jobs perspective用于处理商业营销相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "商业营销",
+      "tags": [
+        "research",
+        "商业营销"
+      ],
+      "whenToUse": [
+        "需要处理商业营销类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:39.926Z"
+    },
+    "tech-note-module-splitter/SKILL.md": {
+      "displayTitle": "tech note module splitter",
+      "displayDescription": "tech note module splitter用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "tech note module splitter用于处理内容创作相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "内容创作",
+      "tags": [
+        "内容创作"
+      ],
+      "whenToUse": [
+        "需要处理内容创作类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:39.971Z"
+    },
+    "zhang-yiming-skill/SKILL.md": {
+      "displayTitle": "zhang yiming perspective",
+      "displayDescription": "zhang yiming perspective用于处理商业营销相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "zhang yiming perspective用于处理商业营销相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "商业营销",
+      "tags": [
+        "ppt",
+        "api",
+        "research",
+        "商业营销"
+      ],
+      "whenToUse": [
+        "需要处理商业营销类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:40.037Z"
+    },
+    "split-to-prs/SKILL.md": {
+      "displayTitle": "split to prs",
+      "displayDescription": "split to prs用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "split to prs用于处理编程开发相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "编程开发",
+      "tags": [
+        "git",
+        "编程开发"
+      ],
+      "whenToUse": [
+        "需要处理编程开发类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:40.104Z"
+    },
+    "local-import/38dc348b4b36876aa361989c": {
+      "displayTitle": "图像生成能力",
+      "displayDescription": "图像生成能力用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "图像生成能力用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "openai",
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:40.173Z"
+    },
+    "local-import/abf6ed2c2638e272b0bcebab": {
+      "displayTitle": "OpenAI 官方文档检索",
+      "displayDescription": "OpenAI 官方文档检索用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "OpenAI 官方文档检索用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "openai",
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:40.224Z"
+    },
+    "local-import/5b9543aeb460d757bc719acb": {
+      "displayTitle": "PowerPoint",
+      "displayDescription": "PowerPoint用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "PowerPoint用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:40.282Z"
+    },
+    "local-import/6833bb796a6cb232bc0773ae": {
+      "displayTitle": "Excel",
+      "displayDescription": "Excel用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Excel用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:40.325Z"
+    },
+    "local-import/79c8dd0a0e2441cc6838f313": {
+      "displayTitle": "extract learning roadmap",
+      "displayDescription": "extract learning roadmap用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "extract learning roadmap用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "workflow",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:33:40.381Z"
+    },
+    "local-import/ba74d913b7bd7965dc9958dd": {
+      "displayTitle": "Markdown 转 PDF",
+      "displayDescription": "Markdown 转 PDF用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Markdown 转 PDF用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "browser",
+        "workflow",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:58:22.773Z"
+    },
+    "local-import/ed0a996b9ea7a902a27d481e": {
+      "displayTitle": "论文项目技术笔记",
+      "displayDescription": "论文项目技术笔记用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "论文项目技术笔记用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:58:22.826Z"
+    },
+    "local-import/5f1c90c3ef5bdd2440d91f0e": {
+      "displayTitle": "项目面试问答生成器",
+      "displayDescription": "项目面试问答生成器用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "项目面试问答生成器用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:58:22.875Z"
+    },
+    "local-import/52c2fc745dcee233c779fc34": {
+      "displayTitle": "项目学习路线生成器",
+      "displayDescription": "项目学习路线生成器用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "项目学习路线生成器用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:58:22.939Z"
+    },
+    "local-import/d38c1dc8911943e5a3b2dfcc": {
+      "displayTitle": "演示文稿工具",
+      "displayDescription": "演示文稿工具用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "演示文稿工具用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "workflow",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:58:22.992Z"
+    },
+    "local-import/a70122075bc97d54313c118d": {
+      "displayTitle": "表格处理工具",
+      "displayDescription": "表格处理工具用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "表格处理工具用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:58:23.049Z"
+    },
+    "local-import/0155898da231840d542ef339": {
+      "displayTitle": "画布能力模块",
+      "displayDescription": "画布能力模块用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "画布能力模块用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "workflow",
+        "cursor",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T10:58:23.103Z"
+    },
+    "local-import/test-1": {
+      "displayTitle": "Test Skill",
+      "displayDescription": "Test Skill用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Test Skill用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "a",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:45:06.783Z"
+    },
+    "local-import/26e1995a772c8627a78e67f3": {
+      "displayTitle": "技能创建模板",
+      "displayDescription": "技能创建模板用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "技能创建模板用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "openai",
+        "testing",
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.768Z"
+    },
+    "local-import/6e7d848f1252f8135c2b06aa": {
+      "displayTitle": "技能安装工具",
+      "displayDescription": "技能安装工具用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "技能安装工具用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "openai",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.780Z"
+    },
+    "local-import/7747b17e098f7e36844e08cc": {
+      "displayTitle": "Word 文档处理",
+      "displayDescription": "Word 文档处理用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Word 文档处理用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "workflow",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.791Z"
+    },
+    "local-import/85bf80a086fe09ae71759877": {
+      "displayTitle": "前端设计能力",
+      "displayDescription": "前端设计能力用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "前端设计能力用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "cursor",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.805Z"
+    },
+    "local-import/cc3d644335f47790ab8e13d6": {
+      "displayTitle": "Notion 研究文档流程",
+      "displayDescription": "Notion 研究文档流程用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Notion 研究文档流程用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.816Z"
+    },
+    "local-import/4a1c408e7def2674ab531391": {
+      "displayTitle": "PDF 处理工具",
+      "displayDescription": "PDF 处理工具用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "PDF 处理工具用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "workflow",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.828Z"
+    },
+    "local-import/9df91e160eb8f6ebdfd04097": {
+      "displayTitle": "浏览器自动化",
+      "displayDescription": "浏览器自动化用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "浏览器自动化用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "browser",
+        "playwright",
+        "workflow",
+        "automation",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.841Z"
+    },
+    "local-import/2d8fdf6d7d474ce135e924b7": {
+      "displayTitle": "项目术语表生成器",
+      "displayDescription": "项目术语表生成器用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "项目术语表生成器用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.853Z"
+    },
+    "local-import/164bce23bae6a9cbf7ac9929": {
+      "displayTitle": "技能仓库同步流程",
+      "displayDescription": "技能仓库同步流程用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "技能仓库同步流程用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.865Z"
+    },
+    "local-import/a44bc703b90408a6f0c9f014": {
+      "displayTitle": "writing plans",
+      "displayDescription": "writing plans用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "writing plans用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "testing",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.881Z"
+    },
+    "local-import/49bb0df86a3377c8b0db2478": {
+      "displayTitle": "图像生成能力",
+      "displayDescription": "图像生成能力用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "图像生成能力用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "openai",
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.893Z"
+    },
+    "local-import/e20444e4f63a4ffa483da200": {
+      "displayTitle": "OpenAI 官方文档检索",
+      "displayDescription": "OpenAI 官方文档检索用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "OpenAI 官方文档检索用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "openai",
+        "workflow",
+        "plugin",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.904Z"
+    },
+    "local-import/97df239a8d912bc36282c1c7": {
+      "displayTitle": "Markdown 转 PDF",
+      "displayDescription": "Markdown 转 PDF用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "Markdown 转 PDF用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "api",
+        "browser",
+        "workflow",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.916Z"
+    },
+    "local-import/0cc67089c38516675eef6209": {
+      "displayTitle": "论文项目技术笔记",
+      "displayDescription": "论文项目技术笔记用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "description": "论文项目技术笔记用于处理通用能力相关任务，帮助你把原始技能能力转成更容易理解、搜索和复用的工作流入口。",
+      "category": "其他",
+      "tags": [
+        "workflow",
+        "codex",
+        "通用能力"
+      ],
+      "whenToUse": [
+        "需要处理通用能力类任务时",
+        "想快速找到合适的本地 AI 技能时",
+        "整理或演示个人能力库时"
+      ],
+      "locale": "zh-CN",
+      "translationSource": "auto",
+      "translatedAt": "2026-04-27T11:55:48.927Z"
     }
   }
 }

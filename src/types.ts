@@ -85,6 +85,12 @@ export interface ImportSkillsResult {
   scannedAt: string;
 }
 
+export interface ImportSourceResult extends ImportSkillsResult {
+  source: SourceId;
+  mode: 'default' | 'manual-path';
+  importedPath: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
@@ -114,7 +120,7 @@ export interface SkillMetadataPatch {
   translatedAt?: string;
 }
 
-export type AppPage = 'skills' | 'map' | 'marketplace' | 'health';
+export type AppPage = 'home' | 'skills' | 'import' | 'map' | 'marketplace' | 'health';
 
 export type MarketplaceAuthor = 'official' | 'community';
 export type MarketplaceSourceType = 'github' | 'marketplace' | 'docs';
@@ -171,6 +177,7 @@ export interface RecommendationScene {
   label: string;
   description: string;
   priority: number;
+  is_primary?: boolean;
   query: RecommendationSceneQuery;
   reason_template: string;
 }
@@ -206,6 +213,8 @@ export interface RecommendationCardItem {
   title: string;
   description: string;
   recommendationReason: string;
+  evidenceLabel: string;
+  reasonBlocks: [string, string, string];
   sourceLabel: string;
   sourceClassName: string;
   healthLabel: string;
@@ -224,4 +233,40 @@ export interface SceneRecommendationResult {
   scene: RecommendationScene;
   items: RecommendationCardItem[];
   coverage: RecommendationCoverageSummary;
+}
+
+export interface PromptRecommendationResult {
+  items: RecommendationCardItem[];
+  fallbackUsed: boolean;
+}
+
+export type DashboardEventType =
+  | 'home_recommendation_view'
+  | 'scene_selected'
+  | 'recommendation_clicked'
+  | 'skill_detail_opened'
+  | 'prompt_recommendation_requested'
+  | 'prompt_recommendation_returned'
+  | 'prompt_recommendation_clicked'
+  | 'prompt_recommendation_fallback';
+
+export interface DashboardEvent {
+  id: string;
+  type: DashboardEventType;
+  createdAt: string;
+  sceneId?: string;
+  recommendedSkillId?: string;
+  matchedSkillId?: string | null;
+}
+
+export interface DashboardEventSummary {
+  sampledEvents: number;
+  recommendationViewCount: number;
+  sceneSelectedCount: number;
+  recommendationClickedCount: number;
+  skillDetailOpenedCount: number;
+  sceneClickRate: number;
+  recommendationClickRate: number;
+  detailOpenRate: number;
+  updatedAt: string;
 }

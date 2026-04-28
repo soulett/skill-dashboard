@@ -1,5 +1,5 @@
 import { mockApi } from '../mock';
-import { SkillMetadataPatch, SourceScanSummary } from '../types';
+import { DashboardEventSummary, PromptRecommendationResult, SkillMetadataPatch, SourceScanSummary } from '../types';
 import { realApi } from './client';
 
 const USE_MOCK = false;
@@ -42,12 +42,72 @@ export const api = USE_MOCK
             scannedAt: new Date().toISOString(),
           } satisfies SourceScanSummary,
         }),
+      getEventSummary: async () =>
+        ({
+          success: true,
+          data: {
+            sampledEvents: 0,
+            recommendationViewCount: 0,
+            sceneSelectedCount: 0,
+            recommendationClickedCount: 0,
+            skillDetailOpenedCount: 0,
+            sceneClickRate: 0,
+            recommendationClickRate: 0,
+            detailOpenRate: 0,
+            updatedAt: new Date().toISOString(),
+          } satisfies DashboardEventSummary,
+        }),
+      trackEvent: async (_payload: unknown) =>
+        ({
+          success: true,
+          data: {
+            id: `mock-${Date.now()}`,
+            type: 'home_recommendation_view' as const,
+            createdAt: new Date().toISOString(),
+          },
+        }),
+      recommendByPrompt: async (_prompt: string, _topK = 5) =>
+        ({
+          success: true,
+          data: {
+            items: [],
+            fallbackUsed: true,
+          } satisfies PromptRecommendationResult,
+        }),
       triggerScan: mockApi.triggerScan,
       importSkills: async () =>
         ({
           success: true,
           data: {
             success: true,
+            importedCount: 0,
+            totalImportedStored: 0,
+            totalSkills: 0,
+            scannedAt: new Date().toISOString(),
+          },
+        }),
+      importSource: async source =>
+        ({
+          success: true,
+          data: {
+            success: true,
+            source,
+            mode: 'default',
+            importedPath: '~/.codex/skills',
+            importedCount: 0,
+            totalImportedStored: 0,
+            totalSkills: 0,
+            scannedAt: new Date().toISOString(),
+          },
+        }),
+      importSourcePath: async (source, inputPath) =>
+        ({
+          success: true,
+          data: {
+            success: true,
+            source,
+            mode: 'manual-path',
+            importedPath: inputPath,
             importedCount: 0,
             totalImportedStored: 0,
             totalSkills: 0,

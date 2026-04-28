@@ -1,4 +1,4 @@
-import { ActivitySquare, Library, Network, RefreshCw, Store, X } from 'lucide-react';
+import { ActivitySquare, FolderSearch, Home, Library, Network, RefreshCw, Store, X } from 'lucide-react';
 import { useState, type ComponentType } from 'react';
 import { AppPage } from '../types';
 
@@ -8,7 +8,12 @@ interface NavItem {
   icon: ComponentType<{ className?: string }>;
 }
 
-const MAIN_NAV: NavItem[] = [{ id: 'skills', label: '技能库', icon: Library }];
+const MAIN_NAV: NavItem[] = [
+  { id: 'home', label: '首页', icon: Home },
+  { id: 'skills', label: '技能库', icon: Library },
+  { id: 'import', label: '导入与来源', icon: FolderSearch },
+];
+
 const TOOL_NAV: NavItem[] = [
   { id: 'map', label: '能力地图', icon: Network },
   { id: 'marketplace', label: '技能市场', icon: Store },
@@ -40,15 +45,15 @@ export default function Sidebar({ currentPage, onNavigate, skillCount, onScan, i
     return (
       <button
         onClick={() => onNavigate(item.id)}
-        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 border-l-2 mb-0.5 ${
+        className={`mb-0.5 flex w-full items-center gap-2.5 rounded-lg border-l-2 px-3 py-2 text-[13px] font-medium transition-all duration-150 ${
           isActive
             ? 'border-primary bg-primary/8 text-on-surface'
             : 'border-transparent text-on-surface-variant hover:bg-surface-bright hover:text-on-surface'
         }`}
       >
-        <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-primary' : ''}`} />
-        <span className="truncate flex-1 text-left">{item.label}</span>
-        {item.id === 'skills' && <span className="font-mono text-[11px] text-on-surface-muted shrink-0">{skillCount}</span>}
+        <Icon className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-primary' : ''}`} />
+        <span className="flex-1 truncate text-left">{item.label}</span>
+        {item.id === 'skills' && <span className="shrink-0 font-mono text-[11px] text-on-surface-muted">{skillCount}</span>}
       </button>
     );
   };
@@ -57,23 +62,23 @@ export default function Sidebar({ currentPage, onNavigate, skillCount, onScan, i
     <>
       <div
         className={`fixed inset-0 z-40 bg-[rgba(4,7,13,0.62)] backdrop-blur-sm transition-opacity lg:hidden ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
         }`}
         onClick={onClose}
       />
 
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-[220px] bg-surface-container border-r border-outline-subtle flex flex-col py-4 transition-transform duration-300 ${
+        className={`fixed left-0 top-0 z-50 flex h-screen w-[220px] flex-col border-r border-outline-subtle bg-surface-container py-4 transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
       >
-        <div className="h-[56px] px-4 pb-3 border-b border-outline-subtle mb-2 shrink-0 flex items-center justify-between">
+        <div className="mb-2 flex h-[56px] shrink-0 items-center justify-between border-b border-outline-subtle px-4 pb-3">
           <div className="flex flex-col justify-center">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-muted select-none">Workspace</span>
-            <span className="text-[13px] text-on-surface mt-1">Skill Dashboard</span>
+            <span className="select-none text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-muted">Workspace</span>
+            <span className="mt-1 text-[13px] text-on-surface">Skill Dashboard</span>
           </div>
-          <button onClick={onClose} className="lg:hidden text-on-surface-muted hover:text-on-surface transition-colors">
-            <X className="w-4 h-4" />
+          <button onClick={onClose} className="text-on-surface-muted transition-colors hover:text-on-surface lg:hidden">
+            <X className="h-4 w-4" />
           </button>
         </div>
 
@@ -82,20 +87,20 @@ export default function Sidebar({ currentPage, onNavigate, skillCount, onScan, i
             <NavButton key={item.id} item={item} />
           ))}
 
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-muted px-3 pt-4 pb-1 select-none">工具视图</p>
+          <p className="select-none px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-muted">工具视图</p>
           {TOOL_NAV.map(item => (
             <NavButton key={item.id} item={item} />
           ))}
         </nav>
 
-        <div className="shrink-0 px-3 pt-2 border-t border-outline-subtle mt-2">
+        <div className="mt-2 shrink-0 border-t border-outline-subtle px-3 pt-2">
           <button
             onClick={handleScan}
             disabled={scanning}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-[13px] font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors disabled:opacity-50"
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium text-on-surface-variant transition-colors hover:bg-surface-bright hover:text-on-surface disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${scanning ? 'animate-spin' : ''}`} />
-            {scanning ? '刷新中...' : '重新扫描技能'}
+            <RefreshCw className={`h-3.5 w-3.5 ${scanning ? 'animate-spin' : ''}`} />
+            {scanning ? '重新扫描中...' : '重新扫描技能'}
           </button>
         </div>
       </aside>
